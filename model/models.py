@@ -12,4 +12,4 @@ class User(Base):
     password = Column(Text, nullable=True)
     code = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
