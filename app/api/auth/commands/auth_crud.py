@@ -6,8 +6,9 @@ from app.api.auth.schemas.create import PhoneNumberInput, VerifyPhoneInput
 from util.context_utils import hash_password, create_access_token, verify_password
 from app.api.auth.schemas.response import TokenResponse
 import random
-from app.api.auth.commands.sms_service import send_sms  
-from datetime import datetime, timedelta, timezone
+# from app.api.auth.commands.sms_service import send_sms  
+from app.api.auth.commands.sms_service_p1 import send_sms
+from datetime import datetime, timezone
 
 
 # CODE_EXPIRATION_MINUTES = 5
