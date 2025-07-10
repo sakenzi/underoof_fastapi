@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from fastapi import HTTPException
 from app.api.auth.schemas.create import PhoneNumberInput, VerifyPhoneInput
-from util.context_utils import hash_password, create_access_token
+from util.context_utils import hash_password, create_access_token, verify_password
 from app.api.auth.schemas.response import TokenResponse
 import random
 from app.api.auth.commands.sms_service import send_sms  
@@ -61,6 +61,24 @@ async def verify_phone_and_register(data: VerifyPhoneInput, db: AsyncSession):
     await db.commit()
     await db.refresh(user)
 
+    access_token, expire_time = create_access_token(data={"sub": str(user.id)})
+
+    return TokenResponse(
+        access_token=access_token,
+        access_token_expire_time=expire_time
+    )
+
+
+async def user_login(phone_number: str, password: str, db: AsyncSession):
+    stmt = await db.execute(select(User).filter(User.phone_number == phone_number))
+    user = stmt.scalar_one_or_none()
+
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(
+            status_code=401,
+            detail="Неправильный номер или пароль"
+        )
+    
     access_token, expire_time = create_access_token(data={"sub": str(user.id)})
 
     return TokenResponse(

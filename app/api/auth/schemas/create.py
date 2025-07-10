@@ -10,3 +10,8 @@ class VerifyPhoneInput(BaseModel):
     code: str
     username: str
     password: str
+
+
+class UserLogin(BaseModel):
+    phone_number: str
+    password: str
