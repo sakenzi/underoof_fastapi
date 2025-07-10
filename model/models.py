@@ -7,9 +7,16 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(100), nullable=True)
+    username = Column(String(100), nullable=False, unique=True)
     phone_number = Column(String(20), unique=True, index=True)
-    password = Column(Text, nullable=True)
-    code = Column(String, nullable=True)
+    password = Column(String, nullable=False)
+
+
+class PhoneCode(Base):
+    __tablename__ = 'phone_codes'
+
+    id = Column(Integer, primary_key=True)
+    phone_number = Column(String(20), unique=True, index=True)
+    code = Column(String(10), nullable=False)
     is_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
