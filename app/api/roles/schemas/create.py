@@ -1,4 +1,5 @@
 from pydantic import BaseModel
 
 
-# class 
+class RoleCreate(BaseModel):
+    role_name: str
