@@ -29,3 +29,13 @@ async def create_role(role: RoleCreate, db: AsyncSession):
     return RoleResponse(
         message="Роль создан"
     )
+
+
+async def get_all_roles(db: AsyncSession):
+    stmt = await db.execute(select(Role))
+    roles = stmt.scalars().unique().all()
+
+    if not roles:
+        return []
+    
+    return roles
