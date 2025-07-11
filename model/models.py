@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Text, Column,  func, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import relationship
 from database.db import Base
 
@@ -11,7 +11,7 @@ class User(Base):
     phone_number = Column(String(20), unique=True, index=True)
     password = Column(String, nullable=False)
 
-    roles = relationship("UserRole", back_populates=True)
+    user_roles = relationship("UserRole", back_populates="user")
 
 
 class PhoneCode(Base):
@@ -30,7 +30,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     role_name = Column(String(20), unique=True, index=True)
 
-    roles = relationship("UserRole", back_populates=True)
+    user_roles = relationship("UserRole", back_populates="role")
 
 
 class UserRole(Base):

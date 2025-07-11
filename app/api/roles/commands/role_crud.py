@@ -42,4 +42,20 @@ async def get_all_roles(db: AsyncSession):
 
 
 async def create_user_role(user_id: int, role_id: int, db: AsyncSession):
-    stmt = 
+    stmt = await db.execute(select(Role).where(Role.id == role_id))
+    role = stmt.scalar_one_or_none()
+    if not role:
+        raise HTTPException(status_code=404, detail="Роль не найдена")
+
+    exists_stmt = await db.execute(
+        select(UserRole).where(UserRole.user_id == user_id, UserRole.role_id == role_id)
+    )
+    if exists_stmt.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Роль уже назначена")
+
+    user_role = UserRole(user_id=user_id, role_id=role_id)
+    db.add(user_role)
+    await db.commit()
+    await db.refresh(user_role)
+
+    return {"message": "Роль успешно назначена"}
