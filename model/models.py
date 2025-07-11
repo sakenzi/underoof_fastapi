@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL
 from sqlalchemy.orm import relationship
 from database.db import Base
 
@@ -42,3 +42,37 @@ class UserRole(Base):
 
     user = relationship("User", back_populates="user_roles")
     role = relationship("Role", back_populates="user_roles")
+
+
+class City(Base):
+    __tablename__ = 'cities'
+
+    id = Column(Integer, primary_key=True)
+    city_name = Column(String, nullable=False, index=True)
+
+    streets = relationship("Street", back_populates="city")
+
+
+class Street(Base):
+    __tablename__ = 'streets'
+
+    id = Column(Integer, primary_key=True)
+    street_name = Column(String, nullable=False)
+
+    city_id = Column(Integer, ForeignKey('cities.id'), nullable=True)
+
+    city = relationship("City", back_populates="streets")
+    locations = relationship("Location", back_populates="street")
+
+
+class Location(Base):
+    __tablename__ = 'locations'
+
+    id = Column(Integer, primary_key=True)
+    number = Column(String, nullable=False)
+    latitude = Column(DECIMAL(9, 6), nullable=False)
+    longitude = Column(DECIMAL(9, 6), nullable=False)
+
+    street_id = Column(Integer, ForeignKey('streets.id'), nullable=True)
+
+    street = relationship("Street", back_populates="locations")
