@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL
+from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL, Date
 from sqlalchemy.orm import relationship
 from database.db import Base
 
@@ -106,6 +106,9 @@ class Advertisement(Base):
     number_of_room = Column(Integer, nullable=True)
     quadrature = Column(Float, nullable=True)
     floor = Column(Integer, nullable=True)
+    price = Column(Integer, nullable=False)
+    from_the_date = Column(Date, nullable=False)
+    before_the_date = Column(Date, nullable=False)
 
     location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
     type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
