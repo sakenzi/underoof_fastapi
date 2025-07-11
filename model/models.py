@@ -11,6 +11,8 @@ class User(Base):
     phone_number = Column(String(20), unique=True, index=True)
     password = Column(String, nullable=False)
 
+    roles = relationship("UserRole", back_populates=True)
+
 
 class PhoneCode(Base):
     __tablename__ = 'phone_codes'
@@ -27,3 +29,16 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True)
     role_name = Column(String(20), unique=True, index=True)
+
+    roles = relationship("UserRole", back_populates=True)
+
+
+class UserRole(Base):
+    __tablename__ = 'user_roles'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)
+
+    user = relationship("User", back_populates="user_roles")
+    role = relationship("Role", back_populates="user_roles")

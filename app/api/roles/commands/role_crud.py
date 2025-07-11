@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
 from fastapi import HTTPException
-from model.models import Role
+from model.models import Role, User, UserRole
 from app.api.roles.schemas.create import RoleCreate
 from app.api.roles.schemas.response import RoleResponse
 from sqlalchemy import select, update
@@ -39,3 +39,7 @@ async def get_all_roles(db: AsyncSession):
         return []
     
     return roles
+
+
+async def create_user_role(user_id: int, role_id: int, db: AsyncSession):
+    stmt = 
