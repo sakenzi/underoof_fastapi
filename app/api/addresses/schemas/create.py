@@ -12,6 +12,6 @@ class CreateStreet(BaseModel):
 
 class CreateLocation(BaseModel):
     number: str
-    latitue: float
+    latitude: float
     longitude: float
     street_id: int

@@ -35,7 +35,7 @@ async def create_street(data: CreateStreet, db: AsyncSession):
     if street:
         raise HTTPException(
             status_code=400,
-            detail="Такая улийца уже существует!"
+            detail="Такая улица уже существует!"
         )
     
     new_street = Street(
@@ -45,4 +45,27 @@ async def create_street(data: CreateStreet, db: AsyncSession):
     db.add(new_street)
     await db.commit()
     await db.refresh(new_street)
-    return {"message": "Улийца добавлено!"}
+    return {"message": "Улица добавлено!"}
+
+
+async def create_location(data: CreateLocation, db: AsyncSession):
+    stmt = await db.execute(select(Location).filter(Location.number == data.number))
+    location = stmt.scalar_one_or_none()
+
+    if location:
+        raise HTTPException(
+            status_code=400,
+            detail="Такой адрес существует"
+        )
+    
+    new_location = Location(
+        number=data.number,
+        latitude=data.latitude,
+        longitude=data.longitude,
+        street_id=data.street_id,
+    )
+    db.add(new_location)
+    await db.commit()
+    await db.refresh(new_location)
+    return {"message": "Адрес добавлен"}
+    
