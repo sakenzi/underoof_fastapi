@@ -42,6 +42,7 @@ class UserRole(Base):
 
     user = relationship("User", back_populates="user_roles")
     role = relationship("Role", back_populates="user_roles")
+    advertisements = relationship("Advertisement", back_populates="user_role")
 
 
 class City(Base):
@@ -76,3 +77,52 @@ class Location(Base):
     street_id = Column(Integer, ForeignKey('streets.id'), nullable=True)
 
     street = relationship("Street", back_populates="locations")
+    advertisements = relationship("Advertisement", back_populates="location")
+
+
+class Photo(Base):
+    __tablename__ = 'photos'
+
+    id = Column(Integer, primary_key=True)
+    photo_link = Column(Text, nullable=False)
+
+    advertisement_photos = relationship("AdvertisementPhoto", back_populates="photo")
+
+
+class TypeAdvertisement(Base):
+    __tablename__ = 'type_advertisements'
+
+    id = Column(Integer, primary_key=True)
+    type_name = Column(String, nullable=False)
+
+    advertisements = relationship("Advertisement", back_populates="type_advertisement")
+
+
+class Advertisement(Base):
+    __tablename__ = 'advertisements'
+
+    id = Column(Integer, primary_key=True)
+    description = Column(Text, nullable=True)
+    number_of_room = Column(Integer, nullable=True)
+    quadrature = Column(Float, nullable=True)
+    floor = Column(Integer, nullable=True)
+
+    location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
+    type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
+    user_role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
+
+    location = relationship("Location", back_populates="advertisements")
+    type_advertisement = relationship("TypeAdvertisement", back_populates="advertisements")
+    user_role = relationship("UserRole", back_populates="advertisements")
+    advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement")
+
+
+class AdvertisementPhoto(Base):
+    __tablename__ = 'advertisement_photos'
+
+    id = Column(Integer, primary_key=True)
+    photo_id = Column(Integer, ForeignKey("photos.id"), nullable=False)
+    advertisement_id = Column(Integer, ForeignKey("advertisements.id"), nullable=False)
+
+    photo = relationship("Photo", back_populates="advertisement_photos")
+    advertisement = relationship("Advertisement", back_populates="advertisement_photos")
