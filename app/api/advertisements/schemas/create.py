@@ -4,7 +4,7 @@ from datetime import date
 
 class CreateAdvertisementByLessee(BaseModel):
     description: str
-    nymber_of_room: int
+    number_of_room: int
     quadrature: float
     floor: int
     location_id: int

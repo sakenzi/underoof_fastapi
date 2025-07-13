@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 from app.api.addresses.schemas.create import CreateCity, CreateLocation, CreateStreet
+from app.api.addresses.schemas.response import CitiesResponse
 from model.models import City, Street, Location
 from sqlalchemy import select
 import logging
@@ -69,3 +70,13 @@ async def create_location(data: CreateLocation, db: AsyncSession):
     await db.refresh(new_location)
     return {"message": "Адрес добавлен"}
     
+
+async def get_all_cities(db: AsyncSession):
+    stmt = await db.execute(select(City))
+    all_cities = stmt.scalars().all()
+    if not all_cities:
+        raise HTTPException(
+            status_code=404,
+            detail="Город не найден!"
+        )
+    return [CitiesResponse.from_orm(cities) for cities in all_cities]
