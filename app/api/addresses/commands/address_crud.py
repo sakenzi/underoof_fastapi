@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 from app.api.addresses.schemas.create import CreateCity, CreateLocation, CreateStreet
-from app.api.addresses.schemas.response import CitiesResponse, StreetsResponse
+from app.api.addresses.schemas.response import CitiesResponse, StreetsResponse, LocationsResponse
 from model.models import City, Street, Location
 from sqlalchemy import select
 import logging
@@ -92,6 +92,20 @@ async def get_streets_by_city(city_id: int, db: AsyncSession) -> List[StreetsRes
             detail="Город не найден"
         )
     street_result = await db.execute(select(Street).filter(Street.city_id==city.id))
-    streets =street_result.scalars().all()
+    streets = street_result.scalars().all()
 
     return [StreetsResponse.from_orm(street) for street in streets]
+
+
+async def get_locations_by_street(street_id: int, db: AsyncSession) -> List[LocationsResponse]:
+    stmt = await db.execute(select(Street).filter(Street.id==street_id))
+    street = stmt.scalars().first()
+    if not street:
+        raise HTTPException(
+            status_code=404,
+            detail="Улица не найдено"
+        )
+    location_result = await db.execute(select(Location).filter(Location.street_id==street_id))
+    locations = location_result.scalars().all()
+
+    return [LocationsResponse.from_orm(location) for location in locations]

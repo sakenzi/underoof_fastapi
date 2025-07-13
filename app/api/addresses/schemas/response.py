@@ -15,3 +15,13 @@ class StreetsResponse(BaseModel):
 
     class Config:
         from_attributes=True
+
+
+class LocationsResponse(BaseModel):
+    id: int
+    number: str
+    latitude: float
+    longitude: float
+
+    class Config:
+        from_attributes=True

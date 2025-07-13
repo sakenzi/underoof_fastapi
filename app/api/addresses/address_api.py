@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
 from app.api.addresses.commands.address_crud import (create_city, create_street, create_location,
-                                                     get_all_cities, get_streets_by_city, )
+                                                     get_all_cities, get_streets_by_city, get_locations_by_street)
 from app.api.addresses.schemas.create import CreateCity, CreateStreet, CreateLocation
-from app.api.addresses.schemas.response import CitiesResponse, StreetsResponse
+from app.api.addresses.schemas.response import CitiesResponse, StreetsResponse, LocationsResponse
 from database.db import get_db
 from typing import List
 
@@ -44,9 +44,18 @@ async def all_cities(db: AsyncSession = Depends(get_db)):
 
 
 @router.get(
-    '/all/strets/{city_id}',
+    '/all/streets/{city_id}',
     summary="Выводить все улицы по id города",
     response_model=List[StreetsResponse]
 )
 async def all_streets_by_city(city_id: int, db: AsyncSession = Depends(get_db)):
     return await get_streets_by_city(city_id, db)
+
+
+@router.get(
+    '/all/locations/{street_id}',
+    summary="Выводить все локаций по id улицы",
+    response_model=List[LocationsResponse]
+)
+async def all_locations_by_street(street_id: int, db: AsyncSession = Depends(get_db)):
+    return await get_locations_by_street(street_id, db)
