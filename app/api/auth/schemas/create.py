@@ -15,3 +15,9 @@ class VerifyPhoneInput(BaseModel):
 class UserLogin(BaseModel):
     phone_number: str
     password: str
+
+
+class UserRegister(BaseModel):
+    phone_number: str
+    username: str
+    password: str

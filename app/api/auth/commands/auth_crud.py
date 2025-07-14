@@ -2,7 +2,7 @@ from model.models import User, PhoneCode
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from fastapi import HTTPException
-from app.api.auth.schemas.create import PhoneNumberInput, VerifyPhoneInput
+from app.api.auth.schemas.create import PhoneNumberInput, VerifyPhoneInput, UserRegister
 from util.context_utils import hash_password, create_access_token, verify_password
 from app.api.auth.schemas.response import TokenResponse
 import random
@@ -88,4 +88,29 @@ async def user_login(phone_number: str, password: str, db: AsyncSession):
     )
 
 
-# async def 
+async def user_register(user: UserRegister, db: AsyncSession):
+    stmt = await db.execute(select(User).filter(User.phone_number==user.phone_number))
+    existing_user = stmt.scalar_one_or_none()
+    if existing_user:
+        raise HTTPException(
+            status_code=400, 
+            detail="User already exists"
+        )
+    
+    hashed_password = hash_password(user.password)
+
+    new_user = User(
+        phone_number=user.phone_number,
+        username=user.username,
+        password=hashed_password,
+    )
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)  
+
+    access_token, expire_time = create_access_token(data={"sub": str(new_user.id)})
+
+    return TokenResponse(
+        access_token=access_token,
+        access_token_expire_time=expire_time,
+    )
