@@ -13,8 +13,8 @@ router = APIRouter()
     summary="Создать объявление от арендатора"
 )
 async def add_advertisement_by_lessee(request: Request, data: CreateAdvertisementByLessee, db: AsyncSession = Depends(get_db)):
-    access_token = get_access_token(request)
-    user_id_str = validate_access_token(access_token)
+    access_token = await get_access_token(request)
+    user_id_str = await validate_access_token(access_token)
 
     try: 
         user_id = int(user_id_str)
