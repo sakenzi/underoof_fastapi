@@ -9,7 +9,7 @@ from database.db import get_db
 router = APIRouter()
 
 @router.post(
-    '/create/type',
+    '/create',
     summary="Создание типа обьявлений",
     response_model=TypeResponse
 )

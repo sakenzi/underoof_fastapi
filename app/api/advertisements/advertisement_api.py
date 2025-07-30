@@ -11,7 +11,7 @@ from util.context_utils import validate_access_token, get_access_token
 router = APIRouter()
 
 @router.post(
-    '/advertisement/lessee/create',
+    '/lessee/create',
     summary="Создать объявление от арендатора"
 )
 async def add_advertisement_by_lessee(request: Request, data: CreateAdvertisementByLessee, db: AsyncSession = Depends(get_db)):
@@ -27,7 +27,7 @@ async def add_advertisement_by_lessee(request: Request, data: CreateAdvertisemen
 
 
 @router.post(
-    '/advertisement/seller/create',
+    '/seller/create',
     summary="Создать объявление от продавца с фото"
 )
 async def add_advertisement_by_seller(
