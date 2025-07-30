@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_NAME: str
     TOKEN_SECRET_KEY: str
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_SERVER: str
+    MAIL_PORT: int
 
     TOKEN_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 15  

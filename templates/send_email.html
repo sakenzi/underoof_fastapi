@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение email | Roomin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(120deg, #e0f7fa, #ffffff);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+        .content {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .code {
+            font-size: 36px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 20px auto;
+            display: inline-block;
+            padding: 14px 24px;
+            background: #e6f0ff;
+            border-radius: 8px;
+            letter-spacing: 4px;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 14px 28px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            background-color: #f7f7f7;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Подтверждение email</h1>
+        </div>
+        <div class="content">
+            <p>Здравствуйте!</p>
+            <p>Благодарим за регистрацию в <strong>Roomin</strong>.</p>
+            <p>Пожалуйста, используйте следующий код для подтверждения вашей почты:</p>
+            <div class="code">{{ verification_code }}</div>
+            <p>Введите код на странице подтверждения в течение 15 минут.</p>
+        </div>
+        <div class="footer">
+            <p>Если вы не регистрировались в Roomin, просто проигнорируйте это письмо.</p>
+            <p>&copy; 2025 Roomin. Все права защищены.</p>
+        </div>
+    </div>
+</body>
+</html>
