@@ -2,9 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 import logging
 from sqlalchemy import select
-from model.models import Advertisement, AdvertisementPhoto, TypeAdvertisement, Photo, UserRole
+from model.models import (Advertisement, AdvertisementPhoto, TypeAdvertisement, Photo, UserRole,
+                          Location, Street, City, User)
 from sqlalchemy.orm import joinedload, selectinload
 from app.api.advertisements.schemas.create import CreateAdvertisementByLessee, CreateAdvertisementBySeller
+from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvertisementResponse
 import uuid
 import shutil
 import os
@@ -90,5 +92,35 @@ async def create_advertisement_by_seller(user_id: int, data: dict, db: AsyncSess
     return {"message": "Объявление с фото создано", "ad_id": new_ad.id}
 
 
-async def get_advertisements_by_lessee(user_id: int, db: AsyncSession) -> list[Advertisement]:
-    query = await db.execute(select(Advertisement).where(Advertisement.user_role_id))
+async def get_advertisement_by_user(user_id: int, db: AsyncSession) -> list[AdvertisementsResponse]:
+    stmt = await db.execute(select(Advertisement).join(UserRole).where(UserRole.user_id == user_id).options(
+        selectinload(Advertisement.location)
+            .selectinload(Location.street)
+            .selectinload(Street.city),
+        selectinload(Advertisement.type_advertisement),
+        selectinload(Advertisement.user_role)
+            .selectinload(UserRole.user),
+        selectinload(Advertisement.user_role)
+            .selectinload(UserRole.role),
+        selectinload(Advertisement.advertisement_photos)
+            .selectinload(AdvertisementPhoto.photo)
+    ))
+    advertisements = stmt.scalars().all()
+
+    for ad in advertisements:
+        ad.photo = [link.photo for link in ad.advertisement_photos]
+
+    return advertisements
+
+
+async def get_advertisements_by_user(user_id: int, db: AsyncSession) -> list[Advertisement]:
+    stmt = await db.execute(select(Advertisement).join(UserRole).where(UserRole.user_id == user_id).options(
+        selectinload(Advertisement.advertisement_photos)
+            .selectinload(AdvertisementPhoto.photo)
+    ))
+    advertisements = stmt.scalars().all()
+
+    for ad in advertisements:
+        ad.photo = [link.photo for link in ad.advertisement_photos]
+
+    return advertisements
