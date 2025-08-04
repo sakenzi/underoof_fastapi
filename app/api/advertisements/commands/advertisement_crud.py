@@ -124,3 +124,47 @@ async def get_advertisements_by_user(user_id: int, db: AsyncSession) -> list[Adv
         ad.photo = [link.photo for link in ad.advertisement_photos]
 
     return advertisements
+
+
+async def get_all_seller_advertisements_for_lessee(user_id: int, db: AsyncSession) -> list[Advertisement]:
+    stmt = await db.execute(select(UserRole).where(UserRole.user_id == user_id, UserRole.role_id == 1))
+    role = stmt.scalar_one_or_none()
+
+    if not role:
+        raise HTTPException(status_code=403, detail="Доступ разрешён только арендаторам (role_id=1)")
+    
+    ads_stmt = await db.execute(select(Advertisement).join(UserRole).where(
+        UserRole.role_id == 2
+    ).options(
+        selectinload(Advertisement.advertisement_photos)
+            .selectinload(AdvertisementPhoto.photo)
+    ))
+    
+    result = ads_stmt.scalars().all()
+
+    for ad in result:
+        ad.photo = [link.photo for link in ad.advertisement_photos]
+
+    return result
+
+
+async def get_all_lessee_advertisements_for_seller(user_id: int, db: AsyncSession) -> list[Advertisement]:
+    stmt = await db.execute(select(UserRole).where(UserRole.user_id == user_id, UserRole.role_id == 2))
+    role = stmt.scalar_one_or_none()
+
+    if not role:
+        raise HTTPException(status_code=403, detail="Доступ разрешен только продовцам (role_id=2)")
+    
+    ads_stmt = await db.execute(select(Advertisement).join(UserRole).where(
+        UserRole.role_id == 1
+    ).options(
+        selectinload(Advertisement.advertisement_photos)
+            .selectinload(AdvertisementPhoto.photo)
+    ))
+
+    result = ads_stmt.scalars().all()
+
+    for ad in result:
+        ad.photo = [link.photo for link in ad.advertisement_photos]
+
+    return result
