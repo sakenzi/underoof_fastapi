@@ -54,6 +54,7 @@ class LocationResponse(BaseModel):
     class Config:
         from_attributes=True
 
+
 class TypeAdvertisementResponse(BaseModel):
     id: int
     type_name: str

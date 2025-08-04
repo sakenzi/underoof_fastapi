@@ -90,4 +90,5 @@ async def create_advertisement_by_seller(user_id: int, data: dict, db: AsyncSess
     return {"message": "Объявление с фото создано", "ad_id": new_ad.id}
 
 
-# async def 
+async def get_advertisements_by_lessee(user_id: int, db: AsyncSession) -> list[Advertisement]:
+    query = await db.execute(select(Advertisement).where(Advertisement.user_role_id))
