@@ -5,9 +5,9 @@ from typing import List
 from database.db import get_db
 from app.api.advertisements.commands.advertisement_crud import (create_advertisement_by_lessee, create_advertisement_by_seller,
                                                                 get_advertisements_by_user, get_all_seller_advertisements_for_lessee,
-                                                                get_all_lessee_advertisements_for_seller)
+                                                                get_all_lessee_advertisements_for_seller, get_advertisement_by_id)
 from app.api.advertisements.schemas.create import CreateAdvertisementByLessee, CreateAdvertisementBySeller
-from app.api.advertisements.schemas.response import AdvertisementsResponse
+from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvertisementResponse
 from util.context_utils import validate_access_token, get_access_token
 
 
@@ -116,3 +116,12 @@ async def get_ads_from_lessee_for_seller(access_token = Depends(get_access_token
     except ValueError:
         raise HTTPException(status_code=400, detail="евалидный ID пользователя в токене")
     return await get_all_lessee_advertisements_for_seller(user_id=user_id, db=db)
+
+
+@router.get(
+    '/{ad_id}',
+    response_model=AdvertisementResponse,
+    summary="Получить объявление по ID"
+)
+async def get_ad_by_id(ad_id: int, db: AsyncSession = Depends(get_db)):
+    return await get_advertisement_by_id(ad_id=ad_id, db=db)

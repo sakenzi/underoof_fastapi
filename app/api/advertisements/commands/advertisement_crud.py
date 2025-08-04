@@ -168,3 +168,27 @@ async def get_all_lessee_advertisements_for_seller(user_id: int, db: AsyncSessio
         ad.photo = [link.photo for link in ad.advertisement_photos]
 
     return result
+
+
+async def get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertisement:
+    stmt = await db.execute(select(Advertisement).where(Advertisement.id == ad_id).options(
+        selectinload(Advertisement.advertisement_photos)
+            .selectinload(AdvertisementPhoto.photo),
+        selectinload(Advertisement.location)
+            .selectinload(Location.street)
+            .selectinload(Street.city),
+        selectinload(Advertisement.type_advertisement),
+        selectinload(Advertisement.user_role)
+            .selectinload(UserRole.user),
+        selectinload(Advertisement.user_role)
+            .selectinload(UserRole.role)
+    ))
+
+    result = stmt.scalars().first()
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Объявление не найдено")
+    
+    result.photo = [link.photo for link in result.advertisement_photos]
+
+    return result
