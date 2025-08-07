@@ -113,7 +113,7 @@ class Advertisement(Base):
     from_the_date = Column(Date, nullable=False)
     before_the_date = Column(Date, nullable=False)
 
-    location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
     type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
     user_role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
 

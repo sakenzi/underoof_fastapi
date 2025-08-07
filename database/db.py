@@ -14,15 +14,15 @@ async_session_factory = async_sessionmaker(
     expire_on_commit=False
 )
 
-# sync_engine = create_engine(
-#     url=settings.DATABASE_URL_psycopg2,  
-#     echo=False
-# )
+sync_engine = create_engine(
+    url=settings.DATABASE_URL_psycopg2,  
+    echo=False
+)
 
-# SessionLocal = sessionmaker(
-#     bind=sync_engine,
-#     expire_on_commit=False
-# )
+SessionLocal = sessionmaker(
+    bind=sync_engine,
+    expire_on_commit=False
+)
 
 class Base(DeclarativeBase):
     pass
