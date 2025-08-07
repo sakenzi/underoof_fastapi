@@ -1,4 +1,5 @@
-from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL, Date
+from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL, Date, Index
+from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 from database.db import Base
 
@@ -76,6 +77,7 @@ class Location(Base):
     number = Column(String, nullable=False)
     latitude = Column(DECIMAL(9, 6), nullable=False)
     longitude = Column(DECIMAL(9, 6), nullable=False)
+    geom = Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
 
     street_id = Column(Integer, ForeignKey('streets.id'), nullable=True)
 
