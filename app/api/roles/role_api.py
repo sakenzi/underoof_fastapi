@@ -11,7 +11,7 @@ from util.context_utils import get_access_token, validate_access_token
 router = APIRouter()
 
 @router.post(
-    '/create/role',
+    '/create',
     summary="Создание ролей",
     response_model=RoleResponse
 )
@@ -30,7 +30,7 @@ async def get_roles(db: AsyncSession = Depends(get_db)):
 
 
 @router.post(
-    "/assign/role",
+    "/assign",
     summary="Назначить роль пользователю",
 )
 async def assign_role(

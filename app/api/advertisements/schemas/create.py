@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 
 class CreateAdvertisementByLessee(BaseModel):
@@ -8,7 +8,7 @@ class CreateAdvertisementByLessee(BaseModel):
     number_of_room: int
     quadrature: float
     floor: int
-    location_id: int
+    location_id: Optional[int] = None
     type_advertisement_id: int
     price: int
     from_the_date: date

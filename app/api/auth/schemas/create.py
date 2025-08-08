@@ -1,23 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
 
 
-class PhoneNumberInput(BaseModel):
-    phone_number: str
+class EmailRequest(BaseModel):
+    email: EmailStr = Field(..., max_length=100)
 
 
-class VerifyPhoneInput(BaseModel):
-    phone_number: str
-    code: str
-    username: str
-    password: str
+class UserCreate(BaseModel):
+    first_name: Optional[str] = Field("", max_length=100)
+    last_name: Optional[str] = Field("", max_length=100)
+    surname: Optional[str] = Field("", max_length=100) 
+    email: EmailStr = Field(..., max_length=50)
+    phone_number: Optional[str] = Field(None, max_length=20)
+    password: str = Field(..., min_length=8) 
 
 
 class UserLogin(BaseModel):
-    phone_number: str
-    password: str
+    email: EmailStr = Field(..., max_length=50)
+    password: str = Field(..., min_length=8) 
 
 
-class UserRegister(BaseModel):
-    phone_number: str
-    username: str
-    password: str
+class VerifyEmail(BaseModel):
+    code: str = Field(..., min_length=6, max_length=6)

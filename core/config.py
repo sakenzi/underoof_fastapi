@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_NAME: str
     TOKEN_SECRET_KEY: str
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_SERVER: str
+    MAIL_PORT: int
 
     TOKEN_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 15  
@@ -27,8 +31,8 @@ class Settings(BaseSettings):
     def DATABASE_URL_asyncpg(self) -> str:
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
-    # @property
-    # def DATABASE_URL_psycopg2(self) -> str:
-    #     return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    @property
+    def DATABASE_URL_psycopg2(self) -> str:
+        return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 settings = Settings()

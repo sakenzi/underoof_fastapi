@@ -1,4 +1,5 @@
-from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL, Date
+from sqlalchemy import String, Integer, Text, Column, func, DateTime, ForeignKey, Float, Boolean, DECIMAL, Date, Index
+from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 from database.db import Base
 
@@ -7,9 +8,14 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(100), nullable=False, unique=True)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    surname = Column(String(100), nullable=False)
+    email = Column(String, unique=True, nullable=True)
     phone_number = Column(String(20), unique=True, index=True)
-    password = Column(String, nullable=False)
+    password = Column(String, nullable=True)
+    verification_code = Column(String(6), nullable=True) 
+    is_active = Column(Boolean, default=False)
 
     user_roles = relationship("UserRole", back_populates="user")
 
@@ -73,6 +79,7 @@ class Location(Base):
     number = Column(String, nullable=False)
     latitude = Column(DECIMAL(9, 6), nullable=False)
     longitude = Column(DECIMAL(9, 6), nullable=False)
+    geom = Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
 
     street_id = Column(Integer, ForeignKey('streets.id'), nullable=True)
 
@@ -109,8 +116,9 @@ class Advertisement(Base):
     price = Column(Integer, nullable=False)
     from_the_date = Column(Date, nullable=False)
     before_the_date = Column(Date, nullable=False)
+    is_active = Column(Boolean, default=True)
 
-    location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
     type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
     user_role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
 

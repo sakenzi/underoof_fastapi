@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 from typing import Optional, List
 
@@ -22,8 +22,8 @@ class RoleResponse(BaseModel):
 
 class UserRoleResponse(BaseModel):
     id: int
-    user: UserResponse
-    role: RoleResponse
+    user: Optional[UserResponse]
+    role: Optional[RoleResponse]
 
     class Config:
         from_attributes=True
@@ -40,6 +40,7 @@ class CityResponse(BaseModel):
 class StreetResponse(BaseModel):
     id: int
     street_name: str
+    city: Optional[CityResponse]
 
     class Config:
         from_attributes=True
@@ -50,9 +51,11 @@ class LocationResponse(BaseModel):
     number: str
     latitude: float
     longitude: float
+    street: Optional[StreetResponse]
 
     class Config:
         from_attributes=True
+
 
 class TypeAdvertisementResponse(BaseModel):
     id: int
@@ -70,7 +73,7 @@ class PhotoResponse(BaseModel):
         from_attributes=True
 
 
-class AdvertisementsResponse(BaseModel):
+class AdvertisementResponse(BaseModel):
     id: int
     description: str
     number_of_room: int
@@ -81,9 +84,26 @@ class AdvertisementsResponse(BaseModel):
     before_the_date: date
     location: Optional[LocationResponse]
     type_advertisement: Optional[TypeAdvertisementResponse]
-    photo: List[PhotoResponse]
-    user: UserRoleResponse
+    photo: List[PhotoResponse] = []
+    user_role: UserRoleResponse
 
 
     class Config:
         from_attributes=True
+
+    
+class AdvertisementsResponse(BaseModel):
+    id: int
+    description: str
+    number_of_room: int
+    quadrature: float
+    floor: int
+    price: int
+    from_the_date: date
+    before_the_date: date
+    type_advertisement_id: int
+    location_id: int
+    photo: List[PhotoResponse] = []
+
+    class Config:
+        from_attributes = True
