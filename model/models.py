@@ -116,6 +116,7 @@ class Advertisement(Base):
     price = Column(Integer, nullable=False)
     from_the_date = Column(Date, nullable=False)
     before_the_date = Column(Date, nullable=False)
+    is_active = Column(Boolean, default=True)
 
     location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
     type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
