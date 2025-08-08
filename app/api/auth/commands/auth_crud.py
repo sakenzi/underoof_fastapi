@@ -160,7 +160,9 @@ async def user_register(user: UserCreate, db: AsyncSession) -> dict:
             update(User)
             .where(User.email == user.email)
             .values(
-                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                surname=user.surname,
                 phone_number=user.phone_number,
                 password=hashed_password,
                 is_active=is_active,
@@ -170,7 +172,9 @@ async def user_register(user: UserCreate, db: AsyncSession) -> dict:
     else:
         verification_code = await generate_verification_code()
         new_user = User(
-            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            surname=user.surname,
             email=user.email,
             phone_number=user.phone_number,
             password=hashed_password,
