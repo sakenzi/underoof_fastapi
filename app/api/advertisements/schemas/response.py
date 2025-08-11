@@ -109,3 +109,15 @@ class AdvertisementsResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# class AdvertisementsFilterResponse(BaseModel):
+#     id: int
+#     type_advertisement_id: Optional[int] = None
+#     location_id: Optional[int] = None
+#     min_price: Optional[int] = None
+#     max_price: Optional[int] = None
+#     from_date: Optional[date] = None
+#     to_date: Optional[date] = None
+#     city_id: Optional[int] = None
+#     street_id: Optional[int] = None

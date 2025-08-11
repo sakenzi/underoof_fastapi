@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 import logging
-from sqlalchemy import select
+from sqlalchemy import select, func, distinct
 from model.models import (Advertisement, AdvertisementPhoto, TypeAdvertisement, Photo, UserRole,
                           Location, Street, City, User)
 from sqlalchemy.orm import joinedload, selectinload
@@ -10,6 +10,8 @@ from app.api.advertisements.schemas.response import AdvertisementsResponse, Adve
 import uuid
 import shutil
 import os
+from typing import Optional, List, Tuple
+from datetime import date
 
 
 logger = logging.getLogger(__name__)
@@ -192,3 +194,80 @@ async def get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertisement
     result.photo = [link.photo for link in result.advertisement_photos]
 
     return result
+
+
+async def get_advertisements_by_filter(
+    db: AsyncSession,
+    *,
+    type_advertisement_id: Optional[int] = None,
+    location_id: Optional[int] = None,
+    min_price: Optional[int] = None,
+    max_price: Optional[int] = None,
+    from_date: Optional[date] = None,
+    to_date: Optional[date] = None,
+    city_id: Optional[int] = None,
+    street_id: Optional[int] = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Tuple[List[Advertisement], int]:
+    base_stmt = (
+        select(Advertisement)
+        .options(
+            selectinload(Advertisement.advertisement_photos).selectinload(AdvertisementPhoto.photo),
+            selectinload(Advertisement.location).selectinload(Location.street).selectinload(Street.city),
+            selectinload(Advertisement.user_role).selectinload(UserRole.user),
+            selectinload(Advertisement.user_role).selectinload(UserRole.role),
+            selectinload(Advertisement.type_advertisement),
+        )
+    )
+
+    conditions = []
+
+    if type_advertisement_id is not None:
+        conditions.append(Advertisement.type_advertisement_id == type_advertisement_id)
+    if location_id is not None:
+        conditions.append(Advertisement.location_id == location_id)
+    if min_price is not None:
+        conditions.append(Advertisement.price >= min_price)
+    if max_price is not None:
+        conditions.append(Advertisement.price <= max_price)
+
+    if from_date and to_date:
+        conditions += [
+            Advertisement.from_the_date <= to_date,
+            Advertisement.before_the_date >= from_date,
+        ]
+    elif from_date:
+        conditions.append(Advertisement.before_the_date >= from_date)
+    elif to_date:
+        conditions.append(Advertisement.from_the_date <= to_date)
+
+    need_geo_join = city_id is not None or street_id is not None
+    stmt = base_stmt
+    if need_geo_join:
+        stmt = stmt.join(Advertisement.location)
+        stmt = stmt.join(Location.street)
+        if city_id is not None:
+            conditions.append(Street.city_id == city_id)
+        if street_id is not None:
+            conditions.append(Street.id == street_id)
+
+    if conditions:
+        stmt = stmt.where(*conditions)
+
+    count_stmt = select(func.count(distinct(Advertisement.id)))
+    if need_geo_join:
+        count_stmt = count_stmt.join(Advertisement.location).join(Location.street)
+    if conditions:
+        count_stmt = count_stmt.where(*conditions)
+
+    total = (await db.execute(count_stmt)).scalar_one()
+
+    stmt = stmt.offset(offset).limit(limit)
+    result = await db.execute(stmt)
+    items: List[Advertisement] = result.scalars().all()
+
+    for ad in items:
+        ad.photo = [link.photo for link in ad.advertisement_photos]
+
+    return items, total

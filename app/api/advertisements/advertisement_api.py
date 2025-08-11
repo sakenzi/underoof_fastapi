@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, Request, HTTPException, Form, UploadFile, File
+from fastapi import APIRouter, Depends, Request, HTTPException, Form, UploadFile, File, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date
-from typing import List
+from typing import List, Optional
 from database.db import get_db
 from app.api.advertisements.commands.advertisement_crud import (create_advertisement_by_lessee, create_advertisement_by_seller,
                                                                 get_advertisements_by_user, get_all_seller_advertisements_for_lessee,
-                                                                get_all_lessee_advertisements_for_seller, get_advertisement_by_id)
+                                                                get_all_lessee_advertisements_for_seller, get_advertisement_by_id,
+                                                                get_advertisements_by_filter, )
 from app.api.advertisements.schemas.create import CreateAdvertisementByLessee, CreateAdvertisementBySeller
 from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvertisementResponse
 from util.context_utils import validate_access_token, get_access_token
@@ -116,6 +117,43 @@ async def get_ads_from_lessee_for_seller(access_token = Depends(get_access_token
     except ValueError:
         raise HTTPException(status_code=400, detail="евалидный ID пользователя в токене")
     return await get_all_lessee_advertisements_for_seller(user_id=user_id, db=db)
+
+
+@router.get(
+    "/filter",
+    response_model=List[AdvertisementResponse],
+    summary="Список объявлений с фильтрами",
+)
+async def get_ads_by_filter(
+    type_advertisement_id: Optional[int] = Query(None),
+    location_id: Optional[int] = Query(None),
+    min_price: Optional[int] = Query(None),
+    max_price: Optional[int] = Query(None),
+    from_date: Optional[date] = Query(None),
+    to_date: Optional[date] = Query(None),
+    city_id: Optional[int] = Query(None),
+    street_id: Optional[int] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    response: Response = None,
+    db: AsyncSession = Depends(get_db),
+):
+    items, total = await get_advertisements_by_filter(
+        db=db,
+        type_advertisement_id=type_advertisement_id,
+        location_id=location_id,
+        min_price=min_price,
+        max_price=max_price,
+        from_date=from_date,
+        to_date=to_date,
+        city_id=city_id,
+        street_id=street_id,
+        limit=limit,
+        offset=offset,
+    )
+    if response is not None:
+        response.headers["X-Total-Count"] = str(total)
+    return items
 
 
 @router.get(
