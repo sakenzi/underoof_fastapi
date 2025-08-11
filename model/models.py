@@ -8,9 +8,9 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    surname = Column(String(100), nullable=False)
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
+    surname = Column(String(100), nullable=True)
     email = Column(String, unique=True, nullable=True)
     phone_number = Column(String(20), unique=True, index=True)
     password = Column(String, nullable=True)

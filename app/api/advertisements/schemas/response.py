@@ -5,7 +5,9 @@ from typing import Optional, List
 
 class UserResponse(BaseModel):
     id: int
-    username: str
+    first_name: str
+    last_name: str
+    surname: str
     phone_number: str
 
     class Config:
