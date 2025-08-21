@@ -78,17 +78,16 @@ class PhotoResponse(BaseModel):
 class AdvertisementResponse(BaseModel):
     id: int
     description: str
-    number_of_room: int
-    quadrature: float
-    floor: int
-    price: int
+    number_of_room: Optional[int] = None
+    quadrature: Optional[float] = None
+    floor: Optional[int] = None
+    price: Optional[int] = None
     from_the_date: date
     before_the_date: date
-    location: Optional[LocationResponse]
-    type_advertisement: Optional[TypeAdvertisementResponse]
-    photo: List[PhotoResponse] = []
+    location: Optional[LocationResponse] = None
+    type_advertisement: Optional[TypeAdvertisementResponse] = None
+    photo: list[PhotoResponse] = []
     user_role: UserRoleResponse
-
 
     class Config:
         from_attributes=True

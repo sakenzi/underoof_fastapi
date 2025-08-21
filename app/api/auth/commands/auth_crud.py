@@ -1,10 +1,11 @@
-from model.models import User, PhoneCode
+from model.models import Role, User, PhoneCode, UserRole
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from fastapi import HTTPException
 from app.api.auth.schemas.create import EmailRequest, UserCreate
 from util.context_utils import hash_password, create_access_token, verify_password
-from app.api.auth.schemas.response import TokenResponse
+from app.api.auth.schemas.response import TokenResponse, UserBase
+from sqlalchemy.orm import joinedload
 import random
 # from app.api.auth.commands.sms_service import send_sms  
 from app.api.auth.commands.sms_service_p1 import send_sms
@@ -197,23 +198,42 @@ async def user_register(user: UserCreate, db: AsyncSession) -> dict:
         await send_verification_email(user.email, verification_code)
         return {"message": "User registered successfully, please verify your email"}
     
-
 async def user_login(email: str, password: str, db: AsyncSession) -> TokenResponse:
-    stmt = await db.execute(select(User).filter(User.email == email))
-    user = stmt.scalar_one_or_none()
+    result = await db.execute(
+        select(User)
+        .options(
+            joinedload(User.user_roles).joinedload(UserRole.role)
+        )
+        .filter(User.email == email)
+    )
+
+    user = result.unique().scalar_one_or_none()
+
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
-    
+
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Please verify your email first")
-    
+
     access_token, expire_time = create_access_token(data={"sub": str(user.id)})
+
+    role_name = None
+    if user.user_roles:
+        role_name = user.user_roles[0].role.role_name 
+
     return TokenResponse(
         access_token=access_token,
         access_token_expire_time=expire_time,
-        message="Login successful"
+        message="Login successful",
+        user=UserBase(
+            first_name=user.first_name,
+            last_name=user.last_name,
+            surname=user.surname,
+            email=user.email,
+            phone_number=user.phone_number,
+            role=role_name
+        )
     )
-
 
 async def verify_user_email(token: str, code: str, db: AsyncSession) -> TokenResponse:
     try:

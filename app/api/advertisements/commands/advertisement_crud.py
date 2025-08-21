@@ -128,7 +128,7 @@ async def get_advertisements_by_user(user_id: int, db: AsyncSession) -> list[Adv
     return advertisements
 
 
-async def get_all_seller_advertisements_for_lessee(user_id: int, db: AsyncSession) -> list[Advertisement]:
+async def get_all_seller_advertisements_for_lessee(user_id: int, db: AsyncSession):
     stmt = await db.execute(select(UserRole).where(UserRole.user_id == user_id, UserRole.role_id == 1))
     role = stmt.scalar_one_or_none()
 

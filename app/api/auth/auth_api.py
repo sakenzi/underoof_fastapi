@@ -64,7 +64,8 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.post(
     '/user/login',
-    summary='Логин пользователя'
+    summary='Логин пользователя',
+    # response_model=TokenResponse
 )
 async def login(login_data: UserLogin, db: AsyncSession = Depends(get_db)):
     return await user_login(email=login_data.email, password=login_data.password, db=db)
