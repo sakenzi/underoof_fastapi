@@ -6,7 +6,7 @@ from model.models import (Advertisement, AdvertisementPhoto, TypeAdvertisement, 
                           Location, Street, City, User)
 from sqlalchemy.orm import joinedload, selectinload
 from app.api.advertisements.schemas.create import CreateAdvertisementByLessee, CreateAdvertisementBySeller
-from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvertisementResponse
+from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvResponse
 import uuid
 import shutil
 import os

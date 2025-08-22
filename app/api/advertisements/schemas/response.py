@@ -75,7 +75,7 @@ class PhotoResponse(BaseModel):
         from_attributes=True
 
 
-class AdvertisementResponse(BaseModel):
+class AdvResponse(BaseModel):
     id: int
     description: str
     number_of_room: int

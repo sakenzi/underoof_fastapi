@@ -8,7 +8,7 @@ from app.api.advertisements.commands.advertisement_crud import (create_advertise
                                                                 get_all_lessee_advertisements_for_seller, get_advertisement_by_id,
                                                                 get_advertisements_by_filter, )
 from app.api.advertisements.schemas.create import CreateAdvertisementByLessee, CreateAdvertisementBySeller
-from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvertisementResponse
+from app.api.advertisements.schemas.response import AdvertisementsResponse, AdvResponse
 from util.context_utils import validate_access_token, get_access_token
 
 
@@ -121,7 +121,7 @@ async def get_ads_from_lessee_for_seller(access_token = Depends(get_access_token
 
 @router.get(
     "/filter",
-    response_model=List[AdvertisementResponse],
+    response_model=List[AdvResponse],
     summary="Список объявлений с фильтрами",
 )
 async def get_ads_by_filter(
@@ -158,7 +158,7 @@ async def get_ads_by_filter(
 
 @router.get(
     '/{ad_id}',
-    response_model=AdvertisementResponse,
+    response_model=AdvResponse,
     summary="Получить объявление по ID"
 )
 async def get_ad_by_id(ad_id: int, db: AsyncSession = Depends(get_db)):
