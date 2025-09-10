@@ -5,6 +5,7 @@ from app.api.types.schemas.response import TypeResponse, TypeBase
 from app.api.types.crud.type_crud import dal_create_type, dal_get_type_by_name, dal_get_all_types
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def bll_create_type(type_data: TypeCreate, db: AsyncSession) -> TypeResponse:
@@ -19,6 +20,7 @@ async def bll_create_type(type_data: TypeCreate, db: AsyncSession) -> TypeRespon
     await dal_create_type(type_data.type_name, db)
     logger.info(f"Type {type_data.type_name} created successfully")
     return TypeResponse(message="Добавлено тип объявления")
+
 
 async def bll_get_all_types(db: AsyncSession) -> list[TypeBase]:
     types = await dal_get_all_types(db)

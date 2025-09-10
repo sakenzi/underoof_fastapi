@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class AddressResponse(BaseModel):
     message: str
+
 
 class CitiesResponse(BaseModel):
     id: int
@@ -11,12 +13,14 @@ class CitiesResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class StreetsResponse(BaseModel):
     id: int
     street_name: str
 
     class Config:
         from_attributes = True
+
 
 class LocationsResponse(BaseModel):
     id: int
@@ -27,19 +31,24 @@ class LocationsResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TypeResponse(BaseModel):
     message: str
+
 
 class TypeBase(BaseModel):
     id: int
     type_name: str
 
+
 class RoleResponse(BaseModel):
     message: str
+
 
 class RolesResponse(BaseModel):
     id: int
     role_name: str
+
 
 class UserBase(BaseModel):
     first_name: str
@@ -48,6 +57,7 @@ class UserBase(BaseModel):
     email: str
     phone_number: str
     role: Optional[str] = None
+
 
 class TokenResponse(BaseModel):
     access_token: str

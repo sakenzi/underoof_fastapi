@@ -10,6 +10,7 @@ class UserBase(BaseModel):
     phone_number: str
     role: str | None
 
+
 class TokenResponse(BaseModel):
     access_token: str
     access_token_expire_time: str

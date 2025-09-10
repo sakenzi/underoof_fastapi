@@ -31,10 +31,12 @@ async def bll_create_favorite(user_id: int, advertisement_id: int, db: AsyncSess
         "message": "Объявление добавлено в избранное"
     }
 
+
 async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
     favorites = await dal_get_favorites_by_user(user_id, db)
     advertisements = [favorite.advertisement for favorite in favorites]
     return await _format_advertisements_response(advertisements, logger)
+
 
 async def bll_delete_favorite(favorite_id: int, user_id: int, db: AsyncSession) -> dict:
     success = await dal_delete_favorite(favorite_id, user_id, db)

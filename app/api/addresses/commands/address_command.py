@@ -11,6 +11,7 @@ from app.api.addresses.crud.address_crud import (
 import logging
 from typing import List
 
+
 logger = logging.getLogger(__name__)
 
 async def bll_create_city(data: CreateCity, db: AsyncSession) -> AddressResponse:
@@ -22,6 +23,7 @@ async def bll_create_city(data: CreateCity, db: AsyncSession) -> AddressResponse
     await dal_create_city(data.city_name, db)
     logger.info(f"City {data.city_name} created successfully")
     return AddressResponse(message="Город добавлен!")
+
 
 async def bll_create_street(data: CreateStreet, db: AsyncSession) -> AddressResponse:
     city = await dal_get_city_by_id(data.city_id, db)
@@ -38,6 +40,7 @@ async def bll_create_street(data: CreateStreet, db: AsyncSession) -> AddressResp
     logger.info(f"Street {data.street_name} created successfully in city {data.city_id}")
     return AddressResponse(message="Улица добавлена!")
 
+
 async def bll_create_location(data: CreateLocation, db: AsyncSession) -> AddressResponse:
     street = await dal_get_street_by_id(data.street_id, db)
     if not street:
@@ -53,9 +56,11 @@ async def bll_create_location(data: CreateLocation, db: AsyncSession) -> Address
     logger.info(f"Location {data.number} created successfully on street {data.street_id}")
     return AddressResponse(message="Адрес добавлен")
 
+
 async def bll_get_all_cities(db: AsyncSession) -> List[CitiesResponse]:
     cities = await dal_get_all_cities(db)
     return [CitiesResponse(id=city.id, city_name=city.city_name) for city in cities]
+
 
 async def bll_get_streets_by_city(city_id: int, db: AsyncSession) -> List[StreetsResponse]:
     city = await dal_get_city_by_id(city_id, db)
@@ -65,6 +70,7 @@ async def bll_get_streets_by_city(city_id: int, db: AsyncSession) -> List[Street
     
     streets = await dal_get_streets_by_city(city_id, db)
     return [StreetsResponse(id=street.id, street_name=street.street_name) for street in streets]
+
 
 async def bll_get_locations_by_street(street_id: int, db: AsyncSession) -> List[LocationsResponse]:
     street = await dal_get_street_by_id(street_id, db)

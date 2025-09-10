@@ -4,8 +4,10 @@ from app.api.addresses.schemas.response import LocationsResponse, StreetsRespons
 from app.api.types.schemas.response import TypeBase
 from app.api.users.schemas.response import UserBase
 
+
 class AddressResponse(BaseModel):
     message: str
+
 
 class CitiesResponse(BaseModel):
     id: int
@@ -14,12 +16,14 @@ class CitiesResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class StreetsResponse(BaseModel):
     id: int
     street_name: str
 
     class Config:
         from_attributes = True
+
 
 class LocationsResponse(BaseModel):
     id: int
@@ -30,19 +34,24 @@ class LocationsResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TypeResponse(BaseModel):
     message: str
+
 
 class TypeBase(BaseModel):
     id: int
     type_name: str
 
+
 class RoleResponse(BaseModel):
     message: str
+
 
 class RolesResponse(BaseModel):
     id: int
     role_name: str
+
 
 class UserBase(BaseModel):
     first_name: str
@@ -54,6 +63,7 @@ class UserBase(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class AdvertisementsResponse(BaseModel):
     id: int
@@ -68,6 +78,7 @@ class AdvertisementsResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class TokenResponse(BaseModel):
     access_token: str

@@ -4,6 +4,7 @@ from sqlalchemy.orm import joinedload
 from model.models import User, UserRole
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def dal_get_user_by_id(user_id: int, db: AsyncSession) -> User | None:

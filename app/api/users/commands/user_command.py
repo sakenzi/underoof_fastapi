@@ -4,6 +4,7 @@ from app.api.users.schemas.create import UserBase
 from app.api.users.crud.user_crud import dal_get_user_by_id
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def bll_get_user_data(user_id: int, db: AsyncSession) -> UserBase:

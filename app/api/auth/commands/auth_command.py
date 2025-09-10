@@ -16,6 +16,7 @@ from app.api.auth.commands.send_email import generate_verification_code, send_ve
 from jose import JWTError, jwt
 from core.config import settings
 
+
 async def _validate_password(password: str):
     if len(password) < 8:
         raise HTTPException(400, "Пароль должен содержать минимум 8 символов.")
@@ -23,6 +24,7 @@ async def _validate_password(password: str):
         raise HTTPException(400, "Пароль должен содержать хотя бы одну букву.")
     if not re.search(r"\d", password):
         raise HTTPException(400, "Пароль должен содержать хотя бы одну цифру.")
+
 
 async def bll_send_verification_code(req: EmailRequest, db: AsyncSession) -> TokenResponse:
     user = await dal_get_user_by_email(req.email, db)
@@ -40,6 +42,7 @@ async def bll_send_verification_code(req: EmailRequest, db: AsyncSession) -> Tok
         message="Verification code sent to your email",
         user=None
     )
+
 
 async def bll_verify_email(token: str, req: VerifyEmail, db: AsyncSession) -> TokenResponse:
     try:
@@ -72,6 +75,7 @@ async def bll_verify_email(token: str, req: VerifyEmail, db: AsyncSession) -> To
         )
     )
 
+
 async def bll_user_register(req: UserCreate, db: AsyncSession) -> MessageResponse:
     await _validate_password(req.password)
 
@@ -82,12 +86,12 @@ async def bll_user_register(req: UserCreate, db: AsyncSession) -> MessageRespons
     if user.verification_code is not None:
         raise HTTPException(400, detail="Email не подтверждён. Пожалуйста, подтвердите email с помощью кода.")
 
-    # Allow overwriting existing active user
     data = req.dict()
     data["password"] = hash_password(req.password)
     await dal_create_user(data=data, db=db)
 
     return MessageResponse(status_code=201, message="User registered successfully")
+
 
 async def bll_user_login(req: UserLogin, db: AsyncSession) -> TokenResponse:
     user = await dal_get_user_with_roles_by_email(req.email, db)

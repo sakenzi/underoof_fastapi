@@ -40,6 +40,7 @@ async def add_advertisement_by_tenant(
     logger.info(f"User {user_id} creating tenant advertisement")
     return await bll_create_advertisement_by_tenant(user_id, data, db)
 
+
 @router.post(
     "/landlord",
     summary="Создать объявление от арендодателя с фото",
@@ -82,6 +83,7 @@ async def add_advertisement_by_landlord(
     logger.info(f"User {user_id} creating landlord advertisement with {len(photos)} photos")
     return await bll_create_advertisement_by_landlord(user_id, data, db)
 
+
 @router.get(
     "/all/user",
     response_model=List[AdvertisementListResponse],
@@ -100,6 +102,7 @@ async def get_my_advertisements(
     
     logger.info(f"Fetching advertisements for user {user_id}")
     return await bll_get_advertisements_by_user(user_id, db)
+
 
 @router.get(
     "/all/tenants",
@@ -120,6 +123,7 @@ async def get_ads_from_landlords_for_tenant(
     logger.info(f"Tenant user {user_id} fetching landlord advertisements")
     return await bll_get_landlord_advertisements_for_tenant(user_id, db)
 
+
 @router.get(
     "/all/landlords",
     response_model=List[AdvertisementListResponse],
@@ -138,6 +142,7 @@ async def get_ads_from_tenants_for_landlord(
     
     logger.info(f"Landlord user {user_id} fetching tenant advertisements")
     return await bll_get_tenant_advertisements_for_landlord(user_id, db)
+
 
 @router.get(
     "/filter",
@@ -166,6 +171,7 @@ async def get_ads_by_filter(
     if response is not None:
         response.headers["X-Total-Count"] = str(total)
     return items
+
 
 @router.get(
     "/{ad_id}",

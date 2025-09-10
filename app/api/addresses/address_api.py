@@ -11,6 +11,7 @@ from util.context_utils import get_access_token, validate_access_token
 from typing import List
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -24,6 +25,7 @@ async def add_city(data: CreateCity, db: AsyncSession = Depends(get_db)):
     logger.info(f"Creating city: {data.city_name}")
     return await bll_create_city(data, db)
 
+
 @router.post(
     "/street",
     summary="Добавить улицу",
@@ -32,6 +34,7 @@ async def add_city(data: CreateCity, db: AsyncSession = Depends(get_db)):
 async def add_street(data: CreateStreet, db: AsyncSession = Depends(get_db)):
     logger.info(f"Creating street: {data.street_name} in city {data.city_id}")
     return await bll_create_street(data, db)
+
 
 @router.post(
     "/location",
@@ -42,6 +45,7 @@ async def add_location(data: CreateLocation, db: AsyncSession = Depends(get_db))
     logger.info(f"Creating location: {data.number} on street {data.street_id}")
     return await bll_create_location(data, db)
 
+
 @router.get(
     "/cities",
     summary="Вывести все города",
@@ -51,6 +55,7 @@ async def all_cities(db: AsyncSession = Depends(get_db)):
     logger.info("Retrieving all cities")
     return await bll_get_all_cities(db)
 
+
 @router.get(
     "/streets/{city_id}",
     summary="Вывести все улицы по ID города",
@@ -59,6 +64,7 @@ async def all_cities(db: AsyncSession = Depends(get_db)):
 async def all_streets_by_city(city_id: int, db: AsyncSession = Depends(get_db)):
     logger.info(f"Retrieving streets for city {city_id}")
     return await bll_get_streets_by_city(city_id, db)
+
 
 @router.get(
     "/locations/{street_id}",

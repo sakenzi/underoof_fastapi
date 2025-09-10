@@ -40,6 +40,7 @@ async def dal_create_advertisement(
     logger.info(f"Created advertisement ID {new_ad.id} for user_role_id {user_role_id}")
     return new_ad
 
+
 async def dal_create_photo(advertisement_id: int, photo_link: str, db: AsyncSession) -> Photo:
     photo_obj = Photo(photo_link=photo_link)
     db.add(photo_obj)
@@ -52,12 +53,14 @@ async def dal_create_photo(advertisement_id: int, photo_link: str, db: AsyncSess
     logger.info(f"Created photo {photo_link} for advertisement ID {advertisement_id}")
     return photo_obj
 
+
 async def dal_get_user_role(user_id: int, role_id: int, db: AsyncSession) -> UserRole | None:
     stmt = select(UserRole).where(UserRole.user_id == user_id, UserRole.role_id == role_id)
     result = await db.execute(stmt)
     user_role = result.scalar_one_or_none()
     logger.info(f"Checked user_role for user_id {user_id}, role_id {role_id}: {'Found' if user_role else 'Not found'}")
     return user_role
+
 
 async def dal_get_location_by_id(location_id: int, db: AsyncSession) -> Location | None:
     stmt = select(Location).where(Location.id == location_id)
@@ -66,12 +69,14 @@ async def dal_get_location_by_id(location_id: int, db: AsyncSession) -> Location
     logger.info(f"Checked location_id {location_id}: {'Found' if location else 'Not found'}")
     return location
 
+
 async def dal_get_type_advertisement_by_id(type_ad_id: int, db: AsyncSession) -> TypeAdvertisement | None:
     stmt = select(TypeAdvertisement).where(TypeAdvertisement.id == type_ad_id)
     result = await db.execute(stmt)
     type_ad = result.scalar_one_or_none()
     logger.info(f"Checked type_advertisement_id {type_ad_id}: {'Found' if type_ad else 'Not found'}")
     return type_ad
+
 
 async def dal_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List[Advertisement]:
     stmt = select(Advertisement).join(UserRole).where(UserRole.user_id == user_id).options(
@@ -91,6 +96,7 @@ async def dal_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List
     logger.info(f"Retrieved {len(advertisements)} advertisements for user_id {user_id}")
     return advertisements
 
+
 async def dal_get_advertisements_by_role(role_id: int, db: AsyncSession) -> List[Advertisement]:
     stmt = select(Advertisement).join(UserRole).where(UserRole.role_id == role_id).options(
         selectinload(Advertisement.location)
@@ -109,6 +115,7 @@ async def dal_get_advertisements_by_role(role_id: int, db: AsyncSession) -> List
     logger.info(f"Retrieved {len(advertisements)} advertisements for role_id {role_id}")
     return advertisements
 
+
 async def dal_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertisement | None:
     stmt = select(Advertisement).where(Advertisement.id == ad_id).options(
         selectinload(Advertisement.location)
@@ -126,6 +133,7 @@ async def dal_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertise
     advertisement = result.scalars().first()
     logger.info(f"Retrieved advertisement ID {ad_id}: {'Found' if advertisement else 'Not found'}")
     return advertisement
+
 
 async def dal_get_advertisements_by_filter(
     db: AsyncSession,

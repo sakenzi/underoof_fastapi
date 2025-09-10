@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from model.models import City, Street, Location
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def dal_create_city(city_name: str, db: AsyncSession) -> City:
@@ -18,15 +19,18 @@ async def dal_create_city(city_name: str, db: AsyncSession) -> City:
     logger.info(f"Created new city: {city_name}")
     return new_city
 
+
 async def dal_get_city_by_name(city_name: str, db: AsyncSession) -> City | None:
     stmt = select(City).filter(City.city_name == city_name)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
+
 async def dal_get_city_by_id(city_id: int, db: AsyncSession) -> City | None:
     stmt = select(City).filter(City.id == city_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
 
 async def dal_create_street(street_name: str, city_id: int, db: AsyncSession) -> Street:
     existing_street = await dal_get_street_by_name(street_name, city_id, db)
@@ -41,15 +45,18 @@ async def dal_create_street(street_name: str, city_id: int, db: AsyncSession) ->
     logger.info(f"Created new street: {street_name} in city {city_id}")
     return new_street
 
+
 async def dal_get_street_by_name(street_name: str, city_id: int, db: AsyncSession) -> Street | None:
     stmt = select(Street).filter(Street.street_name == street_name, Street.city_id == city_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
+
 async def dal_get_street_by_id(street_id: int, db: AsyncSession) -> Street | None:
     stmt = select(Street).filter(Street.id == street_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
 
 async def dal_create_location(number: str, latitude: float, longitude: float, street_id: int, db: AsyncSession) -> Location:
     existing_location = await dal_get_location_by_number(number, street_id, db)
@@ -64,10 +71,12 @@ async def dal_create_location(number: str, latitude: float, longitude: float, st
     logger.info(f"Created new location: {number} on street {street_id}")
     return new_location
 
+
 async def dal_get_location_by_number(number: str, street_id: int, db: AsyncSession) -> Location | None:
     stmt = select(Location).filter(Location.number == number, Location.street_id == street_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
 
 async def dal_get_all_cities(db: AsyncSession) -> list[City]:
     stmt = select(City)
@@ -76,12 +85,14 @@ async def dal_get_all_cities(db: AsyncSession) -> list[City]:
     logger.info(f"Retrieved {len(cities)} cities")
     return cities
 
+
 async def dal_get_streets_by_city(city_id: int, db: AsyncSession) -> list[Street]:
     stmt = select(Street).filter(Street.city_id == city_id)
     result = await db.execute(stmt)
     streets = result.scalars().all()
     logger.info(f"Retrieved {len(streets)} streets for city {city_id}")
     return streets
+
 
 async def dal_get_locations_by_street(street_id: int, db: AsyncSession) -> list[Location]:
     stmt = select(Location).filter(Location.street_id == street_id)

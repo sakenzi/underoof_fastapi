@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post(
-    "/",
+    "",
     summary="Создание ролей",
     response_model=RoleResponse
 )
@@ -21,7 +21,7 @@ async def role_create(role: RoleCreate, db: AsyncSession = Depends(get_db)):
     return await bll_create_role(role, db)
 
 @router.get(
-    "/",
+    "",
     summary="Получить все роли",
     response_model=list[RolesResponse]
 )

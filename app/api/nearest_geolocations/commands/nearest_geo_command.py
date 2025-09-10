@@ -7,6 +7,7 @@ from app.api.nearest_geolocations.crud.nearest_geo_crud import dal_get_nearest_g
 import logging
 from typing import List
 
+
 logger = logging.getLogger(__name__)
 
 async def bll_get_nearest_geolocations(latitude: float, longitude: float, radius: float, db: AsyncSession) -> List[AdvertisementListResponse]:

@@ -2,8 +2,10 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import date
 
+
 class AddressResponse(BaseModel):
     message: str
+
 
 class CitiesResponse(BaseModel):
     id: int
@@ -12,6 +14,7 @@ class CitiesResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class StreetsResponse(BaseModel):
     id: int
     street_name: str
@@ -19,6 +22,7 @@ class StreetsResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class LocationsResponse(BaseModel):
     id: int
@@ -30,8 +34,10 @@ class LocationsResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TypeResponse(BaseModel):
     message: str
+
 
 class TypeAdvertisementResponse(BaseModel):
     id: int
@@ -40,12 +46,14 @@ class TypeAdvertisementResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class RoleResponse(BaseModel):
     id: int
     role_name: str
 
     class Config:
         from_attributes = True
+
 
 class UserResponse(BaseModel):
     id: int
@@ -57,6 +65,7 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class UserRoleResponse(BaseModel):
     id: int
     user: Optional[UserResponse] = None
@@ -64,6 +73,7 @@ class UserRoleResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class UserBase(BaseModel):
     first_name: str
@@ -76,6 +86,7 @@ class UserBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class PhotoResponse(BaseModel):
     id: int
     photo_link: str
@@ -83,9 +94,11 @@ class PhotoResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class AdvertisementResponse(BaseModel):
     message: str
     ad_id: Optional[int] = None
+
 
 class AdvertisementListResponse(BaseModel):
     id: int
@@ -103,6 +116,7 @@ class AdvertisementListResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class TokenResponse(BaseModel):
     access_token: str

@@ -6,12 +6,13 @@ from app.api.types.commands.type_command import bll_create_type, bll_get_all_typ
 from database.db import get_db
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 @router.post(
-    "/",
+    "",
     summary="Создание типа объявлений",
     response_model=TypeResponse
 )
@@ -19,8 +20,9 @@ async def add_type(type_data: TypeCreate, db: AsyncSession = Depends(get_db)):
     logger.info(f"Creating type: {type_data.type_name}")
     return await bll_create_type(type_data, db)
 
+
 @router.get(
-    "/",
+    "",
     summary="Получить все типы объявлений",
     response_model=list[TypeBase]
 )

@@ -3,18 +3,22 @@ from fastapi import UploadFile
 from datetime import date
 from typing import List, Optional
 
+
 class CreateCity(BaseModel):
     city_name: str
+
 
 class CreateStreet(BaseModel):
     street_name: str
     city_id: int
+
 
 class CreateLocation(BaseModel):
     number: str
     latitude: float
     longitude: float
     street_id: int
+
 
 class UserBase(BaseModel):
     first_name: str
@@ -27,17 +31,21 @@ class UserBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TypeCreate(BaseModel):
     type_name: str
 
     class Config:
         from_attributes = True
 
+
 class RoleCreate(BaseModel):
     role_name: str
 
+
 class UserRoleCreate(BaseModel):
     role_id: int
+
 
 class CreateAdvertisementByTenant(BaseModel):
     description: str
@@ -49,6 +57,7 @@ class CreateAdvertisementByTenant(BaseModel):
     price: int
     from_the_date: date
     before_the_date: date
+
 
 class CreateAdvertisementByLandlord(BaseModel):
     description: str

@@ -16,6 +16,7 @@ env = Environment(loader=FileSystemLoader('templates'))
 async def generate_verification_code(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
+
 async def send_verification_email(email: str, code: str):
     logger.info(f"Sending email from {settings.MAIL_USERNAME} via {settings.MAIL_SERVER}:{settings.MAIL_PORT}")
     

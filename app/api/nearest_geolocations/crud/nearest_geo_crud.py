@@ -5,6 +5,7 @@ from geoalchemy2.functions import ST_DWithin, ST_SetSRID, ST_MakePoint
 from model.models import Advertisement, AdvertisementPhoto, Location, Street, City, UserRole, Role
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def dal_get_nearest_geolocations(latitude: float, longitude: float, radius: float, db: AsyncSession) -> list[Advertisement]:

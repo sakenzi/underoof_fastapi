@@ -3,9 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from model.models import User, UserRole, Role
 
+
 async def dal_get_user_by_email(email: str, db: AsyncSession) -> User | None:
     res = await db.execute(select(User).where(User.email == email))
     return res.scalar_one_or_none()
+
 
 async def dal_upsert_verification_code(email: str, code: str, db: AsyncSession) -> User:
     user = await dal_get_user_by_email(email=email, db=db)
@@ -20,6 +22,7 @@ async def dal_upsert_verification_code(email: str, code: str, db: AsyncSession) 
     await db.refresh(user)
     return user
 
+
 async def dal_get_user_by_verification_code(code: str, db: AsyncSession) -> User | None:
     res = await db.execute(
         select(User)
@@ -30,6 +33,7 @@ async def dal_get_user_by_verification_code(code: str, db: AsyncSession) -> User
     )
     return res.unique().scalar_one_or_none()
 
+
 async def dal_clear_verification_code(email: str, db: AsyncSession) -> User:
     user = await dal_get_user_by_email(email=email, db=db)
     if user:
@@ -38,6 +42,7 @@ async def dal_clear_verification_code(email: str, db: AsyncSession) -> User:
         await db.commit()
         await db.refresh(user)
     return user
+
 
 async def dal_create_user(data: dict, db: AsyncSession) -> User:
     user = await dal_get_user_by_email(email=data["email"], db=db)
@@ -65,6 +70,7 @@ async def dal_create_user(data: dict, db: AsyncSession) -> User:
     await db.commit()
     await db.refresh(user)
     return user
+
 
 async def dal_get_user_with_roles_by_email(email: str, db: AsyncSession) -> User | None:
     result = await db.execute(

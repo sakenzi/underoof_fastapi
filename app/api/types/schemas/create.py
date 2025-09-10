@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class TypeCreate(BaseModel):
     type_name: str
 

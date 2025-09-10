@@ -11,6 +11,7 @@ from app.api.roles.crud.role_crud import (
 )
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def bll_create_role(role: RoleCreate, db: AsyncSession) -> RoleResponse:
@@ -26,9 +27,11 @@ async def bll_create_role(role: RoleCreate, db: AsyncSession) -> RoleResponse:
     logger.info(f"Role {role.role_name} created successfully")
     return RoleResponse(message="Роль создана")
 
+
 async def bll_get_all_roles(db: AsyncSession) -> list[dict]:
     roles = await dal_get_all_roles(db)
     return [{"id": role.id, "role_name": role.role_name} for role in roles]
+
 
 async def bll_assign_user_role(user_id: int, role_id: int, db: AsyncSession) -> dict:
     role = await dal_get_role_by_id(role_id, db)

@@ -61,6 +61,7 @@ async def bll_create_advertisement_by_tenant(user_id: int, data: CreateAdvertise
     logger.info(f"Advertisement created by tenant user_id {user_id}, ad_id {advertisement.id}")
     return AdvertisementResponse(message="Объявление успешно создано", ad_id=advertisement.id)
 
+
 async def bll_create_advertisement_by_landlord(user_id: int, data: CreateAdvertisementByLandlord, db: AsyncSession) -> AdvertisementResponse:
     user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
@@ -115,9 +116,11 @@ async def bll_create_advertisement_by_landlord(user_id: int, data: CreateAdverti
     logger.info(f"Advertisement created by landlord user_id {user_id}, ad_id {advertisement.id} with {len(data.photos)} photos")
     return AdvertisementResponse(message="Объявление с фото создано", ad_id=advertisement.id)
 
+
 async def bll_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
     advertisements = await dal_get_advertisements_by_user(user_id, db)
     return await _format_advertisements_response(advertisements, logger)
+
 
 async def bll_get_landlord_advertisements_for_tenant(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
     user_role = await dal_get_user_role(user_id, 1, db)
@@ -128,6 +131,7 @@ async def bll_get_landlord_advertisements_for_tenant(user_id: int, db: AsyncSess
     advertisements = await dal_get_advertisements_by_role(2, db)
     return await _format_advertisements_response(advertisements, logger)
 
+
 async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
     user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
@@ -137,6 +141,7 @@ async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSess
     advertisements = await dal_get_advertisements_by_role(1, db)
     return await _format_advertisements_response(advertisements, logger)
 
+
 async def bll_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> AdvertisementListResponse:
     advertisement = await dal_get_advertisement_by_id(ad_id, db)
     if not advertisement:
@@ -144,6 +149,7 @@ async def bll_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertise
         raise HTTPException(status_code=404, detail="Объявление не найдено")
     
     return (await _format_advertisements_response([advertisement], logger))[0]
+
 
 async def bll_get_advertisements_by_filter(
     db: AsyncSession,
@@ -177,6 +183,7 @@ async def bll_get_advertisements_by_filter(
     )
     formatted_ads = await _format_advertisements_response(advertisements, logger)
     return formatted_ads, total
+
 
 async def _format_advertisements_response(advertisements: List[Advertisement], logger) -> List[AdvertisementListResponse]:
     results = []

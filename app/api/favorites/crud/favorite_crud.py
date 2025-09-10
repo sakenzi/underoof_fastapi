@@ -5,6 +5,7 @@ from typing import List, Optional
 import logging
 from sqlalchemy.orm import selectinload
 
+
 logger = logging.getLogger(__name__)
 
 async def dal_create_favorite(user_id: int, advertisement_id: int, db: AsyncSession) -> Favorite:
@@ -14,6 +15,7 @@ async def dal_create_favorite(user_id: int, advertisement_id: int, db: AsyncSess
     await db.refresh(favorite)
     logger.info(f"Favorite created for user_id={user_id}, advertisement_id={advertisement_id}")
     return favorite
+
 
 async def dal_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favorite]:
     stmt = select(Favorite).where(Favorite.user_id == user_id).options(
@@ -28,6 +30,7 @@ async def dal_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favo
     logger.info(f"Retrieved {len(favorites)} favorites for user_id={user_id}")
     return favorites
 
+
 async def dal_get_favorite_by_id(favorite_id: int, user_id: int, db: AsyncSession) -> Optional[Favorite]:
     stmt = select(Favorite).where(Favorite.id == favorite_id, Favorite.user_id == user_id)
     result = await db.execute(stmt)
@@ -37,6 +40,7 @@ async def dal_get_favorite_by_id(favorite_id: int, user_id: int, db: AsyncSessio
     else:
         logger.warning(f"Favorite {favorite_id} not found for user_id={user_id}")
     return favorite
+
 
 async def dal_delete_favorite(favorite_id: int, user_id: int, db: AsyncSession) -> bool:
     stmt = delete(Favorite).where(Favorite.id == favorite_id, Favorite.user_id == user_id)

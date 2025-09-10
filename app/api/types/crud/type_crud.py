@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from model.models import TypeAdvertisement
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 async def dal_create_type(type_name: str, db: AsyncSession) -> TypeAdvertisement:
@@ -18,10 +19,12 @@ async def dal_create_type(type_name: str, db: AsyncSession) -> TypeAdvertisement
     logger.info(f"Created new type: {type_name}")
     return new_type
 
+
 async def dal_get_type_by_name(type_name: str, db: AsyncSession) -> TypeAdvertisement | None:
     stmt = select(TypeAdvertisement).filter(TypeAdvertisement.type_name == type_name)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
 
 async def dal_get_all_types(db: AsyncSession) -> list[TypeAdvertisement]:
     stmt = select(TypeAdvertisement)

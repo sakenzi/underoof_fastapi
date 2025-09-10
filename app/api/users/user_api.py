@@ -6,12 +6,13 @@ from database.db import get_db
 from util.context_utils import get_access_token, validate_access_token
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 @router.get(
-    "/",
+    "",
     summary="Данные Пользователя",
     response_model=UserBase
 )
