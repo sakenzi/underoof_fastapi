@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/nearest_geolocations")
+router = APIRouter()
 
 @router.get(
     "",
