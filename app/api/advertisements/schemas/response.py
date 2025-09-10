@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
+from typing import Optional, List
 from datetime import date
-
 
 class AddressResponse(BaseModel):
     message: str
@@ -16,7 +15,7 @@ class CitiesResponse(BaseModel):
 class StreetsResponse(BaseModel):
     id: int
     street_name: str
-    city: Optional[CitiesResponse]
+    city: Optional[CitiesResponse] = None
 
     class Config:
         from_attributes = True
@@ -26,7 +25,7 @@ class LocationsResponse(BaseModel):
     number: str
     latitude: float
     longitude: float
-    street: Optional[StreetsResponse]
+    street: Optional[StreetsResponse] = None
 
     class Config:
         from_attributes = True
@@ -60,8 +59,8 @@ class UserResponse(BaseModel):
 
 class UserRoleResponse(BaseModel):
     id: int
-    user: Optional[UserResponse]
-    role: Optional[RoleResponse]
+    user: Optional[UserResponse] = None
+    role: Optional[RoleResponse] = None
 
     class Config:
         from_attributes = True
@@ -97,10 +96,10 @@ class AdvertisementListResponse(BaseModel):
     price: int
     from_the_date: date
     before_the_date: date
-    location: Optional[LocationsResponse]
-    type_advertisement: Optional[TypeAdvertisementResponse]
+    location: Optional[LocationsResponse] = None
+    type_advertisement: Optional[TypeAdvertisementResponse] = None
     photo: List[PhotoResponse] = []
-    user_role: Optional[UserRoleResponse]
+    user_role: Optional[UserRoleResponse] = None
 
     class Config:
         from_attributes = True

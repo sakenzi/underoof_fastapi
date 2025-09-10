@@ -17,10 +17,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/advertisements")
+router = APIRouter()
 
 @router.post(
-    "/tenant/create",
+    "/tenant",
     summary="Создать объявление от арендатора",
     response_model=AdvertisementResponse
 )
@@ -41,7 +41,7 @@ async def add_advertisement_by_tenant(
     return await bll_create_advertisement_by_tenant(user_id, data, db)
 
 @router.post(
-    "/landlord/create",
+    "/landlord",
     summary="Создать объявление от арендодателя с фото",
     response_model=AdvertisementResponse
 )
@@ -168,7 +168,7 @@ async def get_ads_by_filter(
     return items
 
 @router.get(
-    "/advertisement/{ad_id}",
+    "/{ad_id}",
     response_model=AdvertisementListResponse,
     summary="Получить объявление по ID"
 )

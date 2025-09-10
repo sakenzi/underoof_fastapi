@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 UPLOAD_FOLDER = "Uploads/photo_advertisements"
 
 async def bll_create_advertisement_by_tenant(user_id: int, data: CreateAdvertisementByTenant, db: AsyncSession) -> AdvertisementResponse:
-    user_role = await dal_get_user_role(user_id, role_id=1, db=db)
+    user_role = await dal_get_user_role(user_id, 1, db)
     if not user_role:
         logger.error(f"User {user_id} does not have tenant role (role_id=1)")
         raise HTTPException(status_code=403, detail="Доступ запрещен, требуется роль арендатора")
@@ -62,7 +62,7 @@ async def bll_create_advertisement_by_tenant(user_id: int, data: CreateAdvertise
     return AdvertisementResponse(message="Объявление успешно создано", ad_id=advertisement.id)
 
 async def bll_create_advertisement_by_landlord(user_id: int, data: CreateAdvertisementByLandlord, db: AsyncSession) -> AdvertisementResponse:
-    user_role = await dal_get_user_role(user_id, role_id=2, db)
+    user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
         logger.error(f"User {user_id} does not have landlord role (role_id=2)")
         raise HTTPException(status_code=403, detail="Доступ запрещен, требуется роль арендодателя")
@@ -120,21 +120,21 @@ async def bll_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List
     return await _format_advertisements_response(advertisements, logger)
 
 async def bll_get_landlord_advertisements_for_tenant(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
-    user_role = await dal_get_user_role(user_id, role_id=1, db)
+    user_role = await dal_get_user_role(user_id, 1, db)
     if not user_role:
         logger.error(f"User {user_id} does not have tenant role (role_id=1)")
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендаторам")
 
-    advertisements = await dal_get_advertisements_by_role(role_id=2, db)
+    advertisements = await dal_get_advertisements_by_role(2, db)
     return await _format_advertisements_response(advertisements, logger)
 
 async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
-    user_role = await dal_get_user_role(user_id, role_id=2, db)
+    user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
         logger.error(f"User {user_id} does not have landlord role (role_id=2)")
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендодателям")
 
-    advertisements = await dal_get_advertisements_by_role(role_id=1, db)
+    advertisements = await dal_get_advertisements_by_role(1, db)
     return await _format_advertisements_response(advertisements, logger)
 
 async def bll_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> AdvertisementListResponse:
