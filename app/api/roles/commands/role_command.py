@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.roles.schemas.create import RoleCreate, UserRoleCreate
+from app.api.roles.schemas.create import RoleCreate
 from app.api.roles.schemas.response import RoleResponse
 from app.api.roles.crud.role_crud import (
     dal_create_role,

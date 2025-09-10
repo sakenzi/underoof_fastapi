@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.favorites.commands.favorite_command import bll_create_favorite, bll_get_favorites_by_user, bll_delete_favorite
 from app.api.advertisements.schemas.response import AdvertisementListResponse

@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-from model.models import User, UserRole, Role
+from model.models import User, UserRole
 
 
 async def dal_get_user_by_email(email: str, db: AsyncSession) -> User | None:

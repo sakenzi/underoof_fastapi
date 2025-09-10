@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, Request
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.nearest_geolocations.commands.nearest_geo_command import bll_get_nearest_geolocations
 from app.api.advertisements.schemas.response import AdvertisementListResponse

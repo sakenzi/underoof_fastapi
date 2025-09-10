@@ -1,13 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.favorites.crud.favorite_crud import dal_create_favorite, dal_get_favorites_by_user, dal_get_favorite_by_id, dal_delete_favorite
-from app.api.advertisements.schemas.response import AdvertisementListResponse, PhotoResponse
+from app.api.advertisements.schemas.response import AdvertisementListResponse
 from app.api.advertisements.commands.adv_command import _format_advertisements_response
-from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
-from app.api.advertisements.schemas.response import UserResponse, RoleResponse, UserRoleResponse, TypeAdvertisementResponse
 from model.models import Advertisement
 import logging
-from typing import List, Optional
+from typing import List
 
 
 logger = logging.getLogger(__name__)

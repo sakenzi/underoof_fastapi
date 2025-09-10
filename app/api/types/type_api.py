@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.types.schemas.create import TypeCreate
 from app.api.types.schemas.response import TypeResponse, TypeBase

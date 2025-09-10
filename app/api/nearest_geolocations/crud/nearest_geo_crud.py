@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from geoalchemy2.functions import ST_DWithin, ST_SetSRID, ST_MakePoint
-from model.models import Advertisement, AdvertisementPhoto, Location, Street, City, UserRole, Role
+from model.models import Advertisement, AdvertisementPhoto, Location, Street, UserRole
 import logging
 
 

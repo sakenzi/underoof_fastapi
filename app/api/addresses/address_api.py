@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.addresses.schemas.create import CreateCity, CreateStreet, CreateLocation
 from app.api.addresses.schemas.response import AddressResponse, CitiesResponse, StreetsResponse, LocationsResponse
@@ -7,7 +7,6 @@ from app.api.addresses.commands.address_command import (
     bll_get_all_cities, bll_get_streets_by_city, bll_get_locations_by_street
 )
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
 from typing import List
 import logging
 

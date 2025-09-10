@@ -1,4 +1,4 @@
-from fastapi import HTTPException, UploadFile
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.advertisements.schemas.create import CreateAdvertisementByTenant, CreateAdvertisementByLandlord
 from app.api.advertisements.schemas.response import (

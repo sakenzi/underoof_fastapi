@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List, Dict
-from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
+from app.api.addresses.schemas.response import LocationsResponse
 from app.api.types.schemas.response import TypeBase
 from app.api.users.schemas.response import UserBase
 
