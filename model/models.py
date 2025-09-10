@@ -14,7 +14,8 @@ class User(Base):
     email = Column(String, unique=True, nullable=True)
     phone_number = Column(String(20), unique=True, index=True)
     password = Column(String, nullable=True)
-    verification_code = Column(String(6), nullable=True) 
+    verification_code = Column(String(6), nullable=True)
+    verification_code_created_at = Column(DateTime(timezone=True), nullable=True)  
     is_active = Column(Boolean, default=False)
 
     user_roles = relationship("UserRole", back_populates="user")
