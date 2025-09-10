@@ -19,6 +19,7 @@ class User(Base):
     is_active = Column(Boolean, default=False)
 
     user_roles = relationship("UserRole", back_populates="user")
+    favorites = relationship("Favorite", back_populates="user")
 
 
 class PhoneCode(Base):
@@ -127,6 +128,7 @@ class Advertisement(Base):
     type_advertisement = relationship("TypeAdvertisement", back_populates="advertisements")
     user_role = relationship("UserRole", back_populates="advertisements")
     advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement")
+    favorites = relationship("Favorite", back_populates="advertisement")
 
 
 class AdvertisementPhoto(Base):
@@ -138,3 +140,14 @@ class AdvertisementPhoto(Base):
 
     photo = relationship("Photo", back_populates="advertisement_photos")
     advertisement = relationship("Advertisement", back_populates="advertisement_photos")
+
+
+class Favorite(Base):
+    __tablename__ = 'favorites'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    advertisement_id = Column(Integer, ForeignKey('advertisements.id'), nullable=False)
+
+    user = relationship("User", back_populates="favorites")
+    advertisement = relationship("Advertisement", back_populates="favorites")
