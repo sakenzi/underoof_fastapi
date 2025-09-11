@@ -21,3 +21,9 @@ class TokenResponse(BaseModel):
 class MessageResponse(BaseModel):
     status_code: int | None
     message: str
+
+
+class TokenRegisterResponse(BaseModel):
+    access_token: str
+    access_token_expire_time: str
+    message: str = "Token generated successfully"

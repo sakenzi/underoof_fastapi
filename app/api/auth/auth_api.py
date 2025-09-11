@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.auth.schemas.create import EmailRequest, VerifyEmail, UserCreate, UserLogin
-from app.api.auth.schemas.response import MessageResponse, TokenResponse
+from app.api.auth.schemas.response import TokenRegisterResponse, TokenResponse
 from app.api.auth.commands.auth_command import (
     bll_send_verification_code,
     bll_verify_email,
@@ -23,7 +23,7 @@ async def verify_email(token: str, req: VerifyEmail, db: AsyncSession = Depends(
     return await bll_verify_email(token, req, db)
 
 
-@router.post("/register", response_model=MessageResponse, summary="Регистрация нового пользователя")
+@router.post("/register", response_model=TokenRegisterResponse, summary="Регистрация нового пользователя")
 async def register_user(req: UserCreate, db: AsyncSession = Depends(get_db)):
     return await bll_user_register(req, db)
 

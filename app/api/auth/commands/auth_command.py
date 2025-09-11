@@ -2,7 +2,7 @@ from fastapi import HTTPException
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.auth.schemas.create import EmailRequest, VerifyEmail, UserCreate, UserLogin
-from app.api.auth.schemas.response import MessageResponse, TokenResponse, UserBase
+from app.api.auth.schemas.response import MessageResponse, TokenResponse, UserBase, TokenRegisterResponse
 from app.api.auth.crud.auth_crud import (
     dal_get_user_by_email,
     dal_upsert_verification_code,
@@ -90,7 +90,13 @@ async def bll_user_register(req: UserCreate, db: AsyncSession) -> MessageRespons
     data["password"] = hash_password(req.password)
     await dal_create_user(data=data, db=db)
 
-    return MessageResponse(status_code=201, message="User registered successfully")
+    access_token, expire_time = create_access_token(data={"sub": str(user.id)})
+    
+    return TokenRegisterResponse(
+        access_token=access_token,
+        access_token_expire_time=expire_time,
+        message="Login successful",
+    )
 
 
 async def bll_user_login(req: UserLogin, db: AsyncSession) -> TokenResponse:
