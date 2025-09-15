@@ -2,7 +2,7 @@ from fastapi import HTTPException
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.auth.schemas.create import EmailRequest, VerifyEmail, UserCreate, UserLogin
-from app.api.auth.schemas.response import MessageResponse, TokenResponse, UserBase, TokenRegisterResponse
+from app.api.auth.schemas.response import MessageResponse, TokenResponse, UserBase
 from app.api.auth.crud.auth_crud import (
     dal_get_user_by_email,
     dal_upsert_verification_code,
@@ -76,7 +76,7 @@ async def bll_verify_email(token: str, req: VerifyEmail, db: AsyncSession) -> To
     )
 
 
-async def bll_user_register(req: UserCreate, db: AsyncSession) -> MessageResponse:
+async def bll_user_register(req: UserCreate, db: AsyncSession) -> TokenResponse:
     await _validate_password(req.password)
 
     user = await dal_get_user_by_email(req.email, db)
@@ -91,11 +91,20 @@ async def bll_user_register(req: UserCreate, db: AsyncSession) -> MessageRespons
     await dal_create_user(data=data, db=db)
 
     access_token, expire_time = create_access_token(data={"sub": str(user.id)})
-    
-    return TokenRegisterResponse(
+    role_name = user.user_roles[0].role.role_name if user.user_roles else None
+
+    return TokenResponse(
         access_token=access_token,
         access_token_expire_time=expire_time,
         message="Login successful",
+        user=UserBase(
+            first_name=user.first_name or "",
+            last_name=user.last_name or "",
+            surname=user.surname or "",
+            email=user.email or "",
+            phone_number=user.phone_number or "",
+            role=role_name
+        )
     )
 
 

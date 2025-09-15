@@ -5,8 +5,12 @@ from model.models import User, UserRole
 
 
 async def dal_get_user_by_email(email: str, db: AsyncSession) -> User | None:
-    res = await db.execute(select(User).where(User.email == email))
-    return res.scalar_one_or_none()
+    res = await db.execute(
+        select(User)
+        .options(joinedload(User.user_roles).joinedload(UserRole.role))
+        .where(User.email == email)
+    )
+    return res.unique().scalar_one_or_none()
 
 
 async def dal_upsert_verification_code(email: str, code: str, db: AsyncSession) -> User:
