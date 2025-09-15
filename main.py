@@ -7,7 +7,6 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-# app.mount("/new_plant", StaticFiles(directory="new_plant"), name="new_plant")
 
 origins = [
     "http://192.168.193.31:5173",  

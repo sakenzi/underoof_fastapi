@@ -116,6 +116,7 @@ class Advertisement(Base):
     quadrature = Column(Float, nullable=True)
     floor = Column(Integer, nullable=True)
     price = Column(Integer, nullable=False)
+    number_of_people = Column(Integer, nullable=True)
     from_the_date = Column(Date, nullable=False)
     before_the_date = Column(Date, nullable=False)
     is_active = Column(Boolean, default=True)
