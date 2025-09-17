@@ -1,7 +1,9 @@
 from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from model.models import Advertisement, AdvertisementPhoto, Photo, UserRole, Location, TypeAdvertisement, Street
+from model.models import (Advertisement, AdvertisementPhoto, Photo, 
+                          UserRole, Location, TypeAdvertisement, Street,
+                          UserLogo, Logo, User)
 from datetime import date
 import logging
 from typing import List, Tuple, Optional
@@ -87,7 +89,9 @@ async def dal_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List
             .selectinload(Street.city),
         selectinload(Advertisement.type_advertisement),
         selectinload(Advertisement.user_role)
-            .selectinload(UserRole.user),
+            .selectinload(UserRole.user)
+            .selectinload(User.user_logos)  
+            .selectinload(UserLogo.logo),
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
@@ -106,7 +110,9 @@ async def dal_get_advertisements_by_role(role_id: int, db: AsyncSession) -> List
             .selectinload(Street.city),
         selectinload(Advertisement.type_advertisement),
         selectinload(Advertisement.user_role)
-            .selectinload(UserRole.user),
+            .selectinload(UserRole.user)
+            .selectinload(User.user_logos)  
+            .selectinload(UserLogo.logo),
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
@@ -125,7 +131,9 @@ async def dal_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> Advertise
             .selectinload(Street.city),
         selectinload(Advertisement.type_advertisement),
         selectinload(Advertisement.user_role)
-            .selectinload(UserRole.user),
+            .selectinload(UserRole.user)
+            .selectinload(User.user_logos)  
+            .selectinload(UserLogo.logo),
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
@@ -156,7 +164,9 @@ async def dal_get_advertisements_by_filter(
             .selectinload(Street.city),
         selectinload(Advertisement.type_advertisement),
         selectinload(Advertisement.user_role)
-            .selectinload(UserRole.user),
+            .selectinload(UserRole.user)
+            .selectinload(User.user_logos)  
+            .selectinload(UserLogo.logo),
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)

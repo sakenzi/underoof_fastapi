@@ -27,6 +27,7 @@ class UserBase(BaseModel):
     email: str
     phone_number: str
     role: Optional[str] = None
+    logo_link: Optional[str] = None
 
 
 class TokenResponse(BaseModel):
@@ -34,3 +35,11 @@ class TokenResponse(BaseModel):
     access_token_expire_time: str
     message: str = "Token generated successfully"
     user: Optional[UserBase] = None
+
+
+class LogoResponse(BaseModel):
+    message: str
+    logo_id: int | None = None
+
+    class Config:
+        from__attributes=True

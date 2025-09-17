@@ -1,6 +1,6 @@
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.users.schemas.create import UserBase, LogoResponse
+from app.api.users.schemas.response import UserBase, LogoResponse
 from app.api.users.crud.user_crud import dal_get_user_by_id, dal_create_logo
 import logging
 import shutil
@@ -22,6 +22,7 @@ async def bll_get_user_data(user_id: int, db: AsyncSession) -> UserBase:
         raise HTTPException(status_code=400, detail="Please verify your email first")
 
     role_name = user.user_roles[0].role.role_name if user.user_roles else None
+    logo_link = user.user_logos[0].logo.logo_link if user.user_logos else None
     logger.info(f"Returning data for user_id: {user_id}, role: {role_name}")
 
     return UserBase(
@@ -30,7 +31,8 @@ async def bll_get_user_data(user_id: int, db: AsyncSession) -> UserBase:
         surname=user.surname or "",
         email=user.email or "",
         phone_number=user.phone_number or "",
-        role=role_name
+        role=role_name,
+        logo_link=logo_link
     )
 
 

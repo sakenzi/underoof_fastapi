@@ -193,12 +193,14 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
         user_role_response = None
         if ad.user_role:
             user = ad.user_role.user
+            logo_link = user.user_logos[0].logo.logo_link if user.user_logos else None
             user_response = UserResponse(
                 id=user.id,
                 first_name=user.first_name or "",
                 last_name=user.last_name or "",
                 surname=user.surname or "",
-                phone_number=user.phone_number or ""
+                phone_number=user.phone_number or "",
+                logo_link=logo_link,
             ) if user else None
             role_response = RoleResponse(
                 id=ad.user_role.role.id,
@@ -228,7 +230,6 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
                 longitude=ad.location.longitude,
                 street=street_response
             )
-            # Формируем полный адрес
             if ad.location.street and ad.location.street.city:
                 full_address = f"г. {ad.location.street.city.city_name}, ул. {ad.location.street.street_name}, д. {ad.location.number}"
             elif ad.location.street:

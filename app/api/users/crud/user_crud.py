@@ -11,7 +11,8 @@ async def dal_get_user_by_id(user_id: int, db: AsyncSession) -> User | None:
     result = await db.execute(
         select(User)
         .options(
-            joinedload(User.user_roles).joinedload(UserRole.role)
+            joinedload(User.user_roles).joinedload(UserRole.role),
+            joinedload(User.user_logos).joinedload(UserLogo.logo)
         )
         .filter(User.id == user_id)
     )

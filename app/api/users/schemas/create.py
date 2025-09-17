@@ -27,11 +27,3 @@ class RoleCreate(BaseModel):
 
 class UserRoleCreate(BaseModel):
     role_id: int
-
-
-class LogoResponse(BaseModel):
-    message: str
-    logo_id: int | None = None
-
-    class Config:
-        from__attributes=True

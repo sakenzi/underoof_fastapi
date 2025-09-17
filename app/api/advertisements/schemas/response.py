@@ -61,6 +61,7 @@ class UserResponse(BaseModel):
     last_name: str
     surname: str
     phone_number: str
+    logo_link: Optional[str] = None
 
     class Config:
         from_attributes = True
