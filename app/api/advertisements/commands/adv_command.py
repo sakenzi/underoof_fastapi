@@ -211,6 +211,7 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
             )
 
         location_response = None
+        full_address = None
         if ad.location:
             street_response = StreetsResponse(
                 id=ad.location.street.id,
@@ -227,6 +228,13 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
                 longitude=ad.location.longitude,
                 street=street_response
             )
+            # Формируем полный адрес
+            if ad.location.street and ad.location.street.city:
+                full_address = f"г. {ad.location.street.city.city_name}, ул. {ad.location.street.street_name}, д. {ad.location.number}"
+            elif ad.location.street:
+                full_address = f"ул. {ad.location.street.street_name}, д. {ad.location.number}"
+            else:
+                full_address = f"д. {ad.location.number}"
 
         type_ad_response = TypeAdvertisementResponse(
             id=ad.type_advertisement.id,
@@ -251,7 +259,8 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
             location=location_response,
             type_advertisement=type_ad_response,
             user_role=user_role_response,
-            photo=photo_response
+            photo=photo_response,
+            full_address=full_address  
         )
         results.append(result)
     

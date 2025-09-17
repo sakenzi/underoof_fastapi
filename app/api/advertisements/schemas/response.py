@@ -114,6 +114,7 @@ class AdvertisementListResponse(BaseModel):
     type_advertisement: Optional[TypeAdvertisementResponse] = None
     photo: List[PhotoResponse] = []
     user_role: Optional[UserRoleResponse] = None
+    full_address: Optional[str] = None  
 
     class Config:
         from_attributes = True
