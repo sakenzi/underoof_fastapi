@@ -21,6 +21,7 @@ class User(Base):
     user_roles = relationship("UserRole", back_populates="user")
     favorites = relationship("Favorite", back_populates="user")
     user_logos = relationship("UserLogo", back_populates="user")
+    applications = relationship("Application", back_populates="user")
 
 
 class PhoneCode(Base):
@@ -131,6 +132,7 @@ class Advertisement(Base):
     user_role = relationship("UserRole", back_populates="advertisements")
     advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement")
     favorites = relationship("Favorite", back_populates="advertisement")
+    applications = relationship("Application", back_populates="advertisement")
 
 
 class AdvertisementPhoto(Base):
@@ -173,3 +175,15 @@ class UserLogo(Base):
 
     user = relationship("User", back_populates="user_logos")
     logo = relationship("Logo", back_populates="user_logos")
+
+
+class Application(Base):
+    __tablename__ = 'applications'
+
+    id = Column(Integer, primary_key=True, index=True)
+    advertisement_id = Column(Integer, ForeignKey("advertisements.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    advertisement = relationship("Advertisement", back_populates="applications")
+    user = relationship("User", back_populates="applications")
