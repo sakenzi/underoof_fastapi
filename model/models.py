@@ -20,6 +20,7 @@ class User(Base):
 
     user_roles = relationship("UserRole", back_populates="user")
     favorites = relationship("Favorite", back_populates="user")
+    user_logos = relationship("UserLogo", back_populates="user")
 
 
 class PhoneCode(Base):
@@ -152,3 +153,23 @@ class Favorite(Base):
 
     user = relationship("User", back_populates="favorites")
     advertisement = relationship("Advertisement", back_populates="favorites")
+
+
+class Logo(Base):
+    __tablename__ = 'logos'
+
+    id = Column(Integer, primary_key=True)
+    logo_link = Column(Text, nullable=False)
+
+    user_logos = relationship("UserLogo", back_populates="logo")
+
+
+class UserLogo(Base):
+    __tablename__ = 'user_logos'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    logo_id = Column(Integer, ForeignKey('logos.id'), nullable=False)
+
+    user = relationship("User", back_populates="user_logos")
+    logo = relationship("Logo", back_populates="user_logos")

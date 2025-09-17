@@ -1,11 +1,15 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.users.schemas.create import UserBase
-from app.api.users.crud.user_crud import dal_get_user_by_id
+from app.api.users.schemas.create import UserBase, LogoResponse
+from app.api.users.crud.user_crud import dal_get_user_by_id, dal_create_logo
 import logging
+import shutil
+import uuid
+import os
 
 
 logger = logging.getLogger(__name__)
+UPLOAD_LOGO_FOLDER = "uploads/user_logos"
 
 async def bll_get_user_data(user_id: int, db: AsyncSession) -> UserBase:
     user = await dal_get_user_by_id(user_id, db)
@@ -28,3 +32,22 @@ async def bll_get_user_data(user_id: int, db: AsyncSession) -> UserBase:
         phone_number=user.phone_number or "",
         role=role_name
     )
+
+
+async def bll_create_logo(user_id: int, logo: UploadFile, db: AsyncSession) -> LogoResponse:
+    if not logo.filename.lower().endswith(('png', 'jpg', 'jpeg')):
+        logger.error(f"Invalid file type for logo: {logo.filename}")
+        raise HTTPException(status_code=400, detail="Поддерживаются только файлы .png, .jpg, .jpeg")
+    
+    os.makedirs(UPLOAD_LOGO_FOLDER, exist_ok=True)
+
+    filename = f"{uuid.uuid4()}.{logo.filename.split('.')[-1]}"
+    save_path = os.path.join(UPLOAD_LOGO_FOLDER, filename)
+
+    with open(save_path, "wb") as buffer:
+        shutil.copyfileobj(logo.file, buffer)
+
+    logo_obj = await dal_create_logo(user_id=user_id, logo_link=save_path, db=db)
+    
+    logger.info(f"Logo created for user_id {user_id}, logo_id {logo_obj.id}")
+    return LogoResponse(message="Логотип успешно загружен", logo_id=logo_obj.id)
