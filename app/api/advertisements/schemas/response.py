@@ -107,6 +107,7 @@ class AdvertisementListResponse(BaseModel):
     quadrature: float
     floor: int
     price: int
+    number_of_people: Optional[int] = None
     from_the_date: date
     before_the_date: date
     location: Optional[LocationsResponse] = None

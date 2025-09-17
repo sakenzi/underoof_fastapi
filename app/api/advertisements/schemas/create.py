@@ -52,6 +52,7 @@ class CreateAdvertisementByTenant(BaseModel):
     number_of_room: int
     quadrature: float
     floor: int
+    number_of_people: int
     location_id: Optional[int] = None
     type_advertisement_id: int
     price: int
@@ -65,6 +66,7 @@ class CreateAdvertisementByLandlord(BaseModel):
     quadrature: float
     floor: int
     price: int
+    number_of_people: int
     from_the_date: date
     before_the_date: date
     location_id: int
