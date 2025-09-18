@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from model.models import Favorite, Advertisement, AdvertisementPhoto, Street, Location, UserRole
+from model.models import Favorite, Advertisement, AdvertisementPhoto, Street, Location, UserRole, User, UserLogo
 from typing import List, Optional
 import logging
 from sqlalchemy.orm import selectinload
@@ -22,12 +22,12 @@ async def dal_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favo
         selectinload(Favorite.advertisement).selectinload(Advertisement.advertisement_photos).selectinload(AdvertisementPhoto.photo),
         selectinload(Favorite.advertisement).selectinload(Advertisement.location).selectinload(Location.street).selectinload(Street.city),
         selectinload(Favorite.advertisement).selectinload(Advertisement.type_advertisement),
-        selectinload(Favorite.advertisement).selectinload(Advertisement.user_role).selectinload(UserRole.user),
+        selectinload(Favorite.advertisement).selectinload(Advertisement.user_role).selectinload(UserRole.user).selectinload(User.user_logos).selectinload(UserLogo.logo),
         selectinload(Favorite.advertisement).selectinload(Advertisement.user_role).selectinload(UserRole.role),
     )
     result = await db.execute(stmt)
     favorites = result.scalars().all()
-    logger.info(f"Retrieved {len(favorites)} favorites for user_id={user_id}")
+    logger.info(f"Получено {len(favorites)} избранных для user_id={user_id}")
     return favorites
 
 
