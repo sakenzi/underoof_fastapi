@@ -3,10 +3,9 @@ from fastapi import HTTPException
 from app.api.applications.crud.application_crud import dal_create_application, dal_get_application_by_user_and_ad, dal_get_applications_by_user_ads
 from app.api.advertisements.crud.adv_crud import dal_get_user_role, dal_get_advertisement_by_id
 from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse
-from app.api.advertisements.schemas.response import UserResponse, LocationsResponse, StreetsResponse, CitiesResponse, TypeAdvertisementResponse, PhotoResponse
+from app.api.advertisements.schemas.response import UserResponse, LocationsResponse, StreetsResponse, CitiesResponse, TypeAdvertisementResponse, PhotoResponse, AdvertisementResponse
 import logging
 from typing import List
-
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,6 @@ async def bll_create_application(user_id: int, advertisement_id: int, db: AsyncS
     application = await dal_create_application(user_id, advertisement_id, db)
     return ApplicationResponse(message="Отклик успешно создан", application_id=application.id)
 
-
 async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> List[ApplicationListResponse]:
     user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
@@ -47,8 +45,8 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
     applications = await dal_get_applications_by_user_ads(user_id, db)
     results = []
     for app in applications:
-        user=app.user
-        user_response=UserResponse(
+        user = app.user
+        user_response = UserResponse(
             id=user.id,
             first_name=user.first_name or "",
             last_name=user.last_name or "",
@@ -59,7 +57,6 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
 
         advertisement = app.advertisement
         location_response = None
-        full_address = None
         if advertisement.location:
             street_response = StreetsResponse(
                 id=advertisement.location.street.id,
@@ -76,12 +73,6 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
                 longitude=advertisement.location.longitude,
                 street=street_response
             )
-            if advertisement.location.street and advertisement.location.street.city:
-                full_address = f"г. {advertisement.location.street.city.city_name}, ул. {advertisement.location.street.street_name}, д. {advertisement.location.number}"
-            elif advertisement.location.street:
-                full_address = f"ул. {advertisement.location.street.street_name}, д. {advertisement.location.number}"
-            else:
-                full_address = f"д. {advertisement.location.number}"
 
         type_ad_response = TypeAdvertisementResponse(
             id=advertisement.type_advertisement.id,
@@ -93,9 +84,25 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
             for photo in advertisement.advertisement_photos
         ]
 
+        advertisement_response = AdvertisementResponse(
+            id=advertisement.id,
+            description=advertisement.description,
+            number_of_room=advertisement.number_of_room,
+            quadrature=advertisement.quadrature,
+            floor=advertisement.floor,
+            price=advertisement.price,
+            number_of_people=advertisement.number_of_people,
+            from_the_date=advertisement.from_the_date,
+            before_the_date=advertisement.before_the_date,
+            is_active=advertisement.is_active,
+            location=location_response,
+            type_advertisement=type_ad_response,
+            photos=photo_response
+        )
+
         results.append(ApplicationListResponse(
             id=app.id,
-            advertisement_id=app.advertisement_id,
+            advertisement=advertisement_response,  # Changed to full advertisement response
             user=user_response,
             created_at=app.created_at
         ))

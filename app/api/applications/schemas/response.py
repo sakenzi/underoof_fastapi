@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+from app.api.advertisements.schemas.response import AdvertisementListResponse
 
 
 class ApplicationResponse(BaseModel):
@@ -13,7 +14,7 @@ class ApplicationResponse(BaseModel):
 
 class ApplicationListResponse(BaseModel):
     id: int
-    advertisement_id: int
+    advertisement_id: AdvertisementListResponse
     user: Optional[str] = None
     created_at: datetime
 
