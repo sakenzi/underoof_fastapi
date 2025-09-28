@@ -6,7 +6,8 @@ from app.api.addresses.crud.address_crud import (
     dal_create_city, dal_get_city_by_name, dal_get_city_by_id,
     dal_create_street, dal_get_street_by_name, dal_get_street_by_id,
     dal_create_location, dal_get_location_by_number,
-    dal_get_all_cities, dal_get_streets_by_city, dal_get_locations_by_street
+    dal_get_all_cities, dal_get_streets_by_city, dal_get_locations_by_street,
+    dal_get_locations,
 )
 import logging
 from typing import List
@@ -80,3 +81,12 @@ async def bll_get_locations_by_street(street_id: int, db: AsyncSession) -> List[
     
     locations = await dal_get_locations_by_street(street_id, db)
     return [LocationsResponse(id=location.id, number=location.number, latitude=location.latitude, longitude=location.longitude) for location in locations]
+
+
+async def bll_get_locations(db: AsyncSession) -> List[LocationsResponse]:
+    locations = await dal_get_locations(db)
+    if not locations:
+        logger.error(f"Location not found")
+        raise HTTPException(status_code=404, detail="Локация не найдено")
+    return [LocationsResponse(id=location.id, number=location.number, latitude=location.latitude, longitude=location.longitude) for location in locations]
+    

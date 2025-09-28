@@ -100,3 +100,10 @@ async def dal_get_locations_by_street(street_id: int, db: AsyncSession) -> list[
     locations = result.scalars().all()
     logger.info(f"Retrieved {len(locations)} locations for street {street_id}")
     return locations
+
+
+async def dal_get_locations(db: AsyncSession) -> list[Location]:
+    stmt = select(Location)  
+    result = await db.execute(stmt)
+    locations = result.scalars().all()
+    return locations

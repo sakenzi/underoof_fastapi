@@ -4,7 +4,8 @@ from app.api.addresses.schemas.create import CreateCity, CreateStreet, CreateLoc
 from app.api.addresses.schemas.response import AddressResponse, CitiesResponse, StreetsResponse, LocationsResponse
 from app.api.addresses.commands.address_command import (
     bll_create_city, bll_create_street, bll_create_location,
-    bll_get_all_cities, bll_get_streets_by_city, bll_get_locations_by_street
+    bll_get_all_cities, bll_get_streets_by_city, bll_get_locations_by_street,
+    bll_get_locations,
 )
 from database.db import get_db
 from typing import List
@@ -73,3 +74,13 @@ async def all_streets_by_city(city_id: int, db: AsyncSession = Depends(get_db)):
 async def all_locations_by_street(street_id: int, db: AsyncSession = Depends(get_db)):
     logger.info(f"Retrieving locations for street {street_id}")
     return await bll_get_locations_by_street(street_id, db)
+
+
+@router.get(
+    "/locations",
+    summary="Вывести все локаций",
+    response_model=List[LocationsResponse]
+)
+async def all_locations(db: AsyncSession = Depends(get_db)):
+    logger.info(f"Retrieving locations")
+    return await bll_get_locations(db)
