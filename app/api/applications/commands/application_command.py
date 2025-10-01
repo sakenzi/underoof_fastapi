@@ -102,7 +102,7 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
 
         results.append(ApplicationListResponse(
             id=app.id,
-            advertisement=advertisement_response,  # Changed to full advertisement response
+            advertisement=advertisement_response,  
             user=user_response,
             created_at=app.created_at
         ))
