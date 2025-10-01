@@ -18,28 +18,19 @@ class CreateLocation(BaseModel):
     street_id: int
 
 
-class UserBase(BaseModel):
-    first_name: str
-    last_name: str
-    surname: str
-    email: str
-    phone_number: str
-    role: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+class LocationSearchRequest(BaseModel):
+    city_name: Optional[str] = None
+    street_name: Optional[str] = None
+    min_latitude: Optional[float] = None
+    max_latitude: Optional[float] = None
+    min_longitude: Optional[float] = None
+    max_longitude: Optional[float] = None
 
 
-class TypeCreate(BaseModel):
-    type_name: str
-
-    class Config:
-        from_attributes = True
+class StreetSearchRequest(BaseModel):
+    street_name: str
+    city_name: Optional[str] = None
 
 
-class RoleCreate(BaseModel):
-    role_name: str
-
-
-class UserRoleCreate(BaseModel):
-    role_id: int
+class AddressSearchRequest(BaseModel):
+    query: str

@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from model.models import City, Street, Location
 import logging
@@ -106,4 +107,24 @@ async def dal_get_locations(db: AsyncSession) -> list[Location]:
     stmt = select(Location)  
     result = await db.execute(stmt)
     locations = result.scalars().all()
+    return locations
+
+
+async def dal_search_locations_by_address(
+    street_name: str,
+    number: str, 
+    db: AsyncSession
+) -> list[Location]:
+    stmt = select(Location).join(Street, Location.street_id == Street.id).join(City, Street.city_id == City.id)
+
+    stmt = stmt.where(Street.street_name.ilike(f"%{street_name}%"))
+    stmt = stmt.where(Location.number.ilike(f"%{number}%"))
+
+    stmt = stmt.options(
+        selectinload(Location.street).selectinload(Street.city)
+    )
+
+    result = await db.execute(stmt)
+    locations = result.scalars().all()
+    logger.info(f"Retrieved {len(locations)} locations matching address: street={street_name}, number={number}")
     return locations

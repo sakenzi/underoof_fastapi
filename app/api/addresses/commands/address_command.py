@@ -7,8 +7,9 @@ from app.api.addresses.crud.address_crud import (
     dal_create_street, dal_get_street_by_name, dal_get_street_by_id,
     dal_create_location, dal_get_location_by_number,
     dal_get_all_cities, dal_get_streets_by_city, dal_get_locations_by_street,
-    dal_get_locations,
+    dal_get_locations, dal_search_locations_by_address,
 )
+from app.api.addresses.commands.parse_address import parse_address_query
 import logging
 from typing import List
 
@@ -90,3 +91,43 @@ async def bll_get_locations(db: AsyncSession) -> List[LocationsResponse]:
         raise HTTPException(status_code=404, detail="Локация не найдено")
     return [LocationsResponse(id=location.id, number=location.number, latitude=location.latitude, longitude=location.longitude) for location in locations]
     
+
+async def bll_search_locations_by_address(
+    query: str,
+    db: AsyncSession
+) -> List[LocationsResponse]:
+    street_name, number = parse_address_query(query)
+    
+    if not street_name:
+        logger.error("No street name provided in query")
+        raise HTTPException(status_code=400, detail="Укажите название улицы")
+
+    locations = await dal_search_locations_by_address(street_name, number, db)
+    
+    if not locations:
+        logger.info(f"No locations found for address: street={street_name}, number={number}")
+        return []
+
+    results = []
+    for location in locations:
+        street_response = None
+        if location.street:
+            street_response = StreetsResponse(
+                id=location.street.id,
+                street_name=location.street.street_name,
+                city=CitiesResponse(
+                    id=location.street.city.id,
+                    city_name=location.street.city.city_name
+                ) if location.street.city else None
+            )
+        
+        results.append(LocationsResponse(
+            id=location.id,
+            number=location.number,
+            latitude=location.latitude,
+            longitude=location.longitude,
+            street=street_response
+        ))
+
+    logger.info(f"Formatted {len(results)} locations for address search: {query}")
+    return results

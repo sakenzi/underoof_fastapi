@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.favorites.crud.favorite_crud import dal_create_favorite, dal_get_favorites_by_user, dal_get_favorite_by_id, dal_delete_favorite
 from app.api.advertisements.schemas.response import AdvertisementListResponse
 from app.api.advertisements.commands.adv_command import _format_advertisements_response
+from app.api.favorites.schemas.response import FavoriteListResponse, FavoriteResponse
 from model.models import Advertisement
 import logging
 from typing import List
@@ -30,10 +31,24 @@ async def bll_create_favorite(user_id: int, advertisement_id: int, db: AsyncSess
     }
 
 
-async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
+async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[FavoriteListResponse]:
     favorites = await dal_get_favorites_by_user(user_id, db)
+    if not favorites:
+        logger.info(f"No favorites found for user_id={user_id}")
+        return []
+
+    results = []
     advertisements = [favorite.advertisement for favorite in favorites]
-    return await _format_advertisements_response(advertisements, logger)
+    formatted_ads = await _format_advertisements_response(advertisements, logger)
+
+    for favorite, formatted_ad in zip(favorites, formatted_ads):
+        results.append(FavoriteListResponse(
+            favorite_id=favorite.id,
+            advertisement=formatted_ad
+        ))
+
+    logger.info(f"Formatted {len(results)} favorites for user_id={user_id}")
+    return results
 
 
 async def bll_delete_favorite(favorite_id: int, user_id: int, db: AsyncSession) -> dict:

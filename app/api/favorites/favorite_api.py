@@ -5,6 +5,7 @@ from app.api.advertisements.schemas.response import AdvertisementListResponse
 from database.db import get_db
 from util.context_utils import get_access_token, validate_access_token
 from app.api.favorites.schemas.create import FavoriteCreate
+from app.api.favorites.schemas.response import FavoriteListResponse, FavoriteResponse
 import logging
 from typing import List
 
@@ -16,7 +17,7 @@ router = APIRouter()
 @router.post(
     "",
     summary="Добавить объявление в избранное",
-    response_model=dict
+    response_model=FavoriteResponse
 )
 async def add_favorite(
     data: FavoriteCreate,
@@ -33,11 +34,10 @@ async def add_favorite(
     logger.info(f"User {user_id} adding favorite for advertisement {data.advertisement_id}")
     return await bll_create_favorite(user_id, data.advertisement_id, db)
 
-
 @router.get(
     "",
     summary="Получить избранные объявления пользователя",
-    response_model=List[AdvertisementListResponse]
+    response_model=List[FavoriteListResponse]
 )
 async def get_favorites(
     access_token: str = Depends(get_access_token),
@@ -52,7 +52,6 @@ async def get_favorites(
     
     logger.info(f"Fetching favorites for user {user_id}")
     return await bll_get_favorites_by_user(user_id, db)
-
 
 @router.delete(
     "/{favorite_id}",
