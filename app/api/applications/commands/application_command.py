@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-from app.api.applications.crud.application_crud import dal_create_application, dal_get_application_by_user_and_ad, dal_get_applications_by_user_ads
+from app.api.applications.crud.application_crud import (dal_create_application, dal_get_application_by_user_and_ad,        dal_get_applications_by_user_ads, dal_delete_application_by_id, dal_get_application_by_id, )
 from app.api.advertisements.crud.adv_crud import dal_get_user_role, dal_get_advertisement_by_id
 from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse
 from app.api.advertisements.schemas.response import UserResponse, LocationsResponse, StreetsResponse, CitiesResponse, TypeAdvertisementResponse, PhotoResponse, AdvertisementResponse
@@ -109,3 +109,17 @@ async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
 
     logger.info(f"Formatted {len(results)} applications for user_id {user_id}")
     return results
+
+
+async def bll_delete_application_by_id(application_id: int, user_id: int, db: AsyncSession) -> ApplicationResponse:
+    application = await dal_delete_application_by_id(application_id, db)
+    if not application:
+        logger.error(f"Application ID {application_id} not found")
+        raise HTTPException(status_code=404, detail="Отклик не найден")
+    
+    if application.user_id != user_id:
+        logger.error(f"User {user_id} not authorized to delete application ID {application_id}")
+        raise HTTPException(status_code=403, detail="Доступ запрещен, вы не являетесь автором отклика")
+    await dal_get_application_by_id(application_id, db)
+    logger.info(f"Application ID {application_id} deleted by user {user_id}")
+    return ApplicationResponse(message="Отклик успешно удален", application_id=application_id)

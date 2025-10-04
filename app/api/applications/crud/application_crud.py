@@ -49,3 +49,20 @@ async def dal_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> Li
     applications = result.scalars().all()
     logger.info(f"Retrieved {len(applications)} applications for user_id {user_id}'s advertisements")
     return applications
+
+
+async def dal_get_application_by_id(application_id: int, db: AsyncSession) -> Application | None:
+    stmt = select(Application).where(Application.id == application_id)
+    result = await db.execute(stmt)
+    application = result.scalar_one_or_none()
+    logger.info(f"Checked application ID {application_id}: {'Found' if application else 'Not found'}")
+    return application
+
+
+async def dal_delete_application_by_id(application_id: int, db: AsyncSession) -> None:
+    stmt = select(Application).where(Application.id == application_id)
+    result = await db.execute(stmt)
+    application = result.scalar_one_or_none()
+    await db.delete(application)
+    await db.commit()
+    logger.info(f"Application ID {application_id} deleted successfully")
