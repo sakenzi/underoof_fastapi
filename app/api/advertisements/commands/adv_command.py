@@ -8,7 +8,7 @@ from app.api.advertisements.schemas.response import (
 from app.api.advertisements.crud.adv_crud import (
     dal_create_advertisement, dal_create_photo, dal_get_user_role, dal_get_location_by_id,
     dal_get_type_advertisement_by_id, dal_get_advertisements_by_user, dal_get_advertisements_by_role,
-    dal_get_advertisement_by_id, dal_get_advertisements_by_filter
+    dal_get_advertisement_by_id, dal_get_advertisements_by_filter, dal_delete_advertisement_by_id,
 )
 from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
 from datetime import date
@@ -267,3 +267,13 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
     
     logger.info(f"Formatted {len(results)} advertisements for response")
     return results
+
+
+async def bll_delete_advertisement_by_id(ad_id: int, user_id: int, db: AsyncSession) -> AdvertisementResponse:
+    advertisement = await dal_delete_advertisement_by_id(ad_id, db)
+    if not advertisement:
+        logger.error(f"Advertisement ID {ad_id} not found")
+        raise HTTPException(status_code=404, detail="Объявление не найдено")
+    if advertisement.user_role.user_id != user_id:
+        logger.error(f"User {user_id} not authorized to delete advertisement ID {ad_id}")
+        raise HTTPException(status_code=403, detail="Доступ запрещен, вы не являетесь владельцем объявления")

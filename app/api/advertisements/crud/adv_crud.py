@@ -7,6 +7,7 @@ from model.models import (Advertisement, AdvertisementPhoto, Photo,
 from datetime import date
 import logging
 from typing import List, Tuple, Optional
+from fastapi import HTTPException
 
 
 logger = logging.getLogger(__name__)
@@ -216,3 +217,15 @@ async def dal_get_advertisements_by_filter(
     advertisements = result.scalars().all()
     logger.info(f"Retrieved {len(advertisements)} advertisements with filters, total count: {total}")
     return advertisements, total
+
+
+async def dal_delete_advertisement_by_id(ad_id: int, db: AsyncSession) -> None:
+    stmt = select(Advertisement).where(Advertisement.id == ad_id)
+    result = await db.execute(stmt)
+    advertisement = result.scalars().first()
+    if not advertisement:
+        logger.error("Advertisement ID {ad_id} not found for deletion")
+        raise HTTPException(status_code=404, detail="Объявление не найдено")
+    await db.delete(advertisement)
+    await db.commit()
+    logger.info("Advertisement ID {ad_id} deleted successfully")

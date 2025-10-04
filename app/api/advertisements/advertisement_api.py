@@ -6,7 +6,7 @@ from app.api.advertisements.commands.adv_command import (
     bll_create_advertisement_by_tenant, bll_create_advertisement_by_landlord,
     bll_get_advertisements_by_user, bll_get_landlord_advertisements_for_tenant,
     bll_get_tenant_advertisements_for_landlord, bll_get_advertisement_by_id,
-    bll_get_advertisements_by_filter
+    bll_get_advertisements_by_filter, bll_delete_advertisement_by_id,
 )
 from database.db import get_db
 from util.context_utils import get_access_token, validate_access_token
@@ -183,3 +183,19 @@ async def get_ads_by_filter(
 async def get_ad_by_id(ad_id: int, db: AsyncSession = Depends(get_db)):
     logger.info(f"Fetching advertisement ID {ad_id}")
     return await bll_get_advertisement_by_id(ad_id, db)
+
+
+@router.delete(
+    "/{ad_id}",
+    summary="Удалить свое объявление по ID",
+    response_model=AdvertisementResponse
+)
+async def delete_ad_by_id(ad_id: int, access_token: str = Depends(get_access_token), db: AsyncSession = Depends(get_db)):
+    user_id_str = await validate_access_token(access_token)
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
+        logger.error(f"Invalid user ID in token: {user_id_str}")
+        raise HTTPException(status_code=400, detail="Невалидный ID пользователя в токене")
+    logger.error(f"User {user_id} attempting to delete advertisement ID {ad_id}")
+    return await bll_delete_advertisement_by_id(ad_id, user_id, db)
