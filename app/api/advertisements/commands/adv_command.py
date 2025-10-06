@@ -187,7 +187,7 @@ async def bll_get_advertisements_by_filter(
     return formatted_ads, total
 
 
-async def _format_advertisements_response(advertisements: List[Advertisement], logger) -> List[AdvertisementListResponse]:
+async def _format_advertisements_response(advertisements: List[Advertisement], logger, user_id: Optional[int] = None) -> List[AdvertisementListResponse]:
     results = []
     for ad in advertisements:
         user_role_response = None
@@ -247,6 +247,10 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
             for photo in ad.advertisement_photos
         ]
 
+        is_favourite = False
+        if user_id:
+            is_favourite = any(fav.user_id == user_id for fav in ad.favorites)
+
         result = AdvertisementListResponse(
             id=ad.id,
             description=ad.description,
@@ -261,11 +265,12 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
             type_advertisement=type_ad_response,
             user_role=user_role_response,
             photo=photo_response,
-            full_address=full_address  
+            full_address=full_address,
+            is_favourite=is_favourite
         )
         results.append(result)
     
-    logger.info(f"Formatted {len(results)} advertisements for response")
+    logger.info(f"Formatted {len(results)} advertisements for response, user_id: {user_id}")
     return results
 
 
