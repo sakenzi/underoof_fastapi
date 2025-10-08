@@ -18,10 +18,10 @@ class User(Base):
     verification_code_created_at = Column(DateTime(timezone=True), nullable=True)  
     is_active = Column(Boolean, default=False)
 
-    user_roles = relationship("UserRole", back_populates="user")
-    favorites = relationship("Favorite", back_populates="user")
-    user_logos = relationship("UserLogo", back_populates="user")
-    applications = relationship("Application", back_populates="user")
+    user_roles = relationship("UserRole", back_populates="user", cascade="all, delete", passive_deletes=True)
+    favorites = relationship("Favorite", back_populates="user", cascade="all, delete", passive_deletes=True)
+    user_logos = relationship("UserLogo", back_populates="user", cascade="all, delete", passive_deletes=True)
+    applications = relationship("Application", back_populates="user", cascade="all, delete", passive_deletes=True)
 
 
 class PhoneCode(Base):
@@ -40,19 +40,19 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     role_name = Column(String(20), unique=True, index=True)
 
-    user_roles = relationship("UserRole", back_populates="role")
+    user_roles = relationship("UserRole", back_populates="role", cascade="all, delete", passive_deletes=True)
 
 
 class UserRole(Base):
     __tablename__ = 'user_roles'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), nullable=True)
+    role_id = Column(Integer, ForeignKey('roles.id', ondelete="CASCADE"), nullable=True)
 
     user = relationship("User", back_populates="user_roles")
     role = relationship("Role", back_populates="user_roles")
-    advertisements = relationship("Advertisement", back_populates="user_role")
+    advertisements = relationship("Advertisement", back_populates="user_role", cascade="all, delete", passive_deletes=True)
 
 
 class City(Base):
@@ -61,7 +61,7 @@ class City(Base):
     id = Column(Integer, primary_key=True)
     city_name = Column(String, nullable=False, index=True)
 
-    streets = relationship("Street", back_populates="city")
+    streets = relationship("Street", back_populates="city", cascade="all, delete", passive_deletes=True)
 
 
 class Street(Base):
@@ -70,10 +70,10 @@ class Street(Base):
     id = Column(Integer, primary_key=True)
     street_name = Column(String, nullable=False)
 
-    city_id = Column(Integer, ForeignKey('cities.id'), nullable=True)
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete="CASCADE"), nullable=True)
 
     city = relationship("City", back_populates="streets")
-    locations = relationship("Location", back_populates="street")
+    locations = relationship("Location", back_populates="street", cascade="all, delete", passive_deletes=True)
 
 
 class Location(Base):
@@ -85,10 +85,10 @@ class Location(Base):
     longitude = Column(DECIMAL(9, 6), nullable=False)
     geom = Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
 
-    street_id = Column(Integer, ForeignKey('streets.id'), nullable=True)
+    street_id = Column(Integer, ForeignKey('streets.id', ondelete="CASCADE"), nullable=True)
 
     street = relationship("Street", back_populates="locations")
-    advertisements = relationship("Advertisement", back_populates="location")
+    advertisements = relationship("Advertisement", back_populates="location", cascade="all, delete", passive_deletes=True)
 
 
 class Photo(Base):
@@ -97,7 +97,7 @@ class Photo(Base):
     id = Column(Integer, primary_key=True)
     photo_link = Column(Text, nullable=False)
 
-    advertisement_photos = relationship("AdvertisementPhoto", back_populates="photo")
+    advertisement_photos = relationship("AdvertisementPhoto", back_populates="photo", cascade="all, delete", passive_deletes=True)
 
 
 class TypeAdvertisement(Base):
@@ -106,7 +106,7 @@ class TypeAdvertisement(Base):
     id = Column(Integer, primary_key=True)
     type_name = Column(String, nullable=False)
 
-    advertisements = relationship("Advertisement", back_populates="type_advertisement")
+    advertisements = relationship("Advertisement", back_populates="type_advertisement", cascade="all, delete", passive_deletes=True)
 
 
 class Advertisement(Base):
@@ -123,24 +123,24 @@ class Advertisement(Base):
     before_the_date = Column(Date, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    location_id = Column(Integer, ForeignKey("locations.id"), nullable=True)
-    type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id"), nullable=False)
-    user_role_id = Column(Integer, ForeignKey("user_roles.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("locations.id", ondelete="CASCADE"), nullable=True)
+    type_advertisement_id = Column(Integer, ForeignKey("type_advertisements.id", ondelete="CASCADE"), nullable=False)
+    user_role_id = Column(Integer, ForeignKey("user_roles.id", ondelete="CASCADE"), nullable=False)
 
     location = relationship("Location", back_populates="advertisements")
     type_advertisement = relationship("TypeAdvertisement", back_populates="advertisements")
     user_role = relationship("UserRole", back_populates="advertisements")
-    advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement")
-    favorites = relationship("Favorite", back_populates="advertisement")
-    applications = relationship("Application", back_populates="advertisement")
+    advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
+    favorites = relationship("Favorite", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
+    applications = relationship("Application", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
 
 
 class AdvertisementPhoto(Base):
     __tablename__ = 'advertisement_photos'
 
     id = Column(Integer, primary_key=True)
-    photo_id = Column(Integer, ForeignKey("photos.id"), nullable=False)
-    advertisement_id = Column(Integer, ForeignKey("advertisements.id"), nullable=False)
+    photo_id = Column(Integer, ForeignKey("photos.id", ondelete="CASCADE"), nullable=False)
+    advertisement_id = Column(Integer, ForeignKey("advertisements.id", ondelete="CASCADE"), nullable=False)
 
     photo = relationship("Photo", back_populates="advertisement_photos")
     advertisement = relationship("Advertisement", back_populates="advertisement_photos")
@@ -150,8 +150,8 @@ class Favorite(Base):
     __tablename__ = 'favorites'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    advertisement_id = Column(Integer, ForeignKey('advertisements.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    advertisement_id = Column(Integer, ForeignKey('advertisements.id', ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="favorites")
     advertisement = relationship("Advertisement", back_populates="favorites")
@@ -163,15 +163,15 @@ class Logo(Base):
     id = Column(Integer, primary_key=True)
     logo_link = Column(Text, nullable=False)
 
-    user_logos = relationship("UserLogo", back_populates="logo")
+    user_logos = relationship("UserLogo", back_populates="logo", cascade="all, delete", passive_deletes=True)
 
 
 class UserLogo(Base):
     __tablename__ = 'user_logos'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    logo_id = Column(Integer, ForeignKey('logos.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    logo_id = Column(Integer, ForeignKey('logos.id', ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="user_logos")
     logo = relationship("Logo", back_populates="user_logos")
@@ -181,8 +181,8 @@ class Application(Base):
     __tablename__ = 'applications'
 
     id = Column(Integer, primary_key=True, index=True)
-    advertisement_id = Column(Integer, ForeignKey("advertisements.id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    advertisement_id = Column(Integer, ForeignKey("advertisements.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     advertisement = relationship("Advertisement", back_populates="applications")
