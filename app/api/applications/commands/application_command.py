@@ -10,9 +10,9 @@ from typing import List
 logger = logging.getLogger(__name__)
 
 async def bll_create_application(user_id: int, advertisement_id: int, db: AsyncSession) -> ApplicationResponse:
-    user_role = await dal_get_user_role(user_id, 1, db)
+    user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
-        logger.error(f"User {user_id} does not have tenant role (role_id=1)")
+        logger.error(f"User {user_id} does not have tenant role (role_id=2)")
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендаторам")
     
     advertisement = await dal_get_advertisement_by_id(advertisement_id, db)
@@ -37,9 +37,9 @@ async def bll_create_application(user_id: int, advertisement_id: int, db: AsyncS
     return ApplicationResponse(message="Отклик успешно создан", application_id=application.id)
 
 async def bll_get_applications_by_user_ads(user_id: int, db: AsyncSession) -> List[ApplicationListResponse]:
-    user_role = await dal_get_user_role(user_id, 2, db)
+    user_role = await dal_get_user_role(user_id, 1, db)
     if not user_role:
-        logger.error(f"User {user_id} does not have landlord role (role_id=2)")
+        logger.error(f"User {user_id} does not have landlord role (role_id=1)")
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендодателям")
     
     applications = await dal_get_applications_by_user_ads(user_id, db)
