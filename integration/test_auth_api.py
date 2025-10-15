@@ -130,3 +130,70 @@ async def test_verify_email_invalid_token(httpx_client: AsyncClient):
 
     assert response.status_code == 401
     assert "detail" in response.json()
+
+@pytest.mark.asyncio
+async def test_register_success(httpx_client: AsyncClient, test_db):
+    test_email = "dias@gmail.com"
+    test_data = {
+        "first_name": "John",
+        "last_name": "Doe",
+        "surname": "Smith",
+        "email": test_email,
+        "phone_number": "87772069568",
+        "password": "dias.2020"
+    }
+
+    response = await httpx_client.post(
+        "/api/auth/register",
+        json=test_data
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["message"] == "Token generated successfully"
+    assert "access_token" in response_json
+    assert "access_token_expire_time" is not None
+    assert response_json["user"]["email"] == test_email
+    assert response_json["user"]["first_name"] == test_data["first_name"]
+    assert response_json["user"]["last_name"] == test_data["last_name"]
+    assert response_json["user"]["surname"] == test_data["surname"]
+    assert response_json["user"]["phone_number"] == test_data["phone_number"]
+    assert response_json["user"]["role"] == "user"
+
+    user = await test_db.fetch_one(
+        "SELECT * FROM users WHERE email = :email",
+        {"email": test_email}
+    )
+    assert user is not None
+    assert user["email"] == test_email
+    assert user["is_active"] == True
+
+    role = await test_db.fetch_one(
+        "SELECT r.role_name FROM roles r "
+        "JOIN user_roles ur ON r.id = ur.role_id "
+        "JOIN users u ON ur.user_id = u.id "
+        "WHERE u.email = :email",
+        {"email": test_email}
+    )
+    assert role["role_name"] == "user"
+
+@pytest.mark.asyncio
+async def test_register_invalid_input(httpx_client: AsyncClient):
+    test_data = {
+        "first_name": "John",
+        "last_name": "Doe",
+        "surname": "Smith",
+        "email": "invalid-email",
+        "phone_number": "+1234567890",
+        "password": "short"
+    }
+
+    response = await httpx_client.post(
+        "/api/auth/register",
+        json=test_data
+    )
+    assert response.status_code == 422
+    assert "detail" in response.json()
+
+# @pytest.mark.asyncio
+# async def test_login_success
