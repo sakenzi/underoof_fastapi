@@ -132,7 +132,20 @@ class Advertisement(Base):
     user_role = relationship("UserRole", back_populates="advertisements")
     advertisement_photos = relationship("AdvertisementPhoto", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
     favorites = relationship("Favorite", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
-    applications = relationship("Application", back_populates="advertisement", cascade="all, delete", passive_deletes=True)
+    applications = relationship(
+        "Application",
+        foreign_keys="[Application.advertisement_id]",
+        back_populates="advertisement",
+        cascade="all, delete",
+        passive_deletes=True
+    )
+    proposed_applications = relationship(
+        "Application",
+        foreign_keys="[Application.proposed_advertisement_id]",
+        back_populates="proposed_advertisement",
+        cascade="all, delete",
+        passive_deletes=True
+    )
 
 
 class AdvertisementPhoto(Base):
@@ -183,7 +196,17 @@ class Application(Base):
     id = Column(Integer, primary_key=True, index=True)
     advertisement_id = Column(Integer, ForeignKey("advertisements.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    proposed_advertisement_id = Column(Integer, ForeignKey("advertisements.id", ondelete="CASCADE"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    advertisement = relationship("Advertisement", back_populates="applications")
+    advertisement = relationship(
+        "Advertisement",
+        foreign_keys=[advertisement_id],
+        back_populates="applications"
+    )
     user = relationship("User", back_populates="applications")
+    proposed_advertisement = relationship(
+        "Advertisement",
+        foreign_keys=[proposed_advertisement_id],
+        back_populates="proposed_applications"
+    )

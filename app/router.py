@@ -8,6 +8,7 @@ from app.api.nearest_geolocations.nearest_geo_api import router as nearest_geo_r
 from app.api.advertisements.advertisement_api import router as advertisement_router
 from app.api.favorites.favorite_api import router as favourite_router
 from app.api.applications.application_api import router as application_router
+from app.api.applications2.application_api import router as application2_router
 
 
 route=APIRouter()
@@ -21,3 +22,5 @@ route.include_router(nearest_geo_router, prefix="/nearest_geo", tags=["Nearest g
 route.include_router(advertisement_router, prefix="/adv", tags=["Advertisement"])
 route.include_router(favourite_router, prefix="/favorite", tags=["Favorite"])
 route.include_router(application_router, prefix="/application", tags=["Application"])
+
+route.include_router(application2_router, prefix="/application2", tags=["Application2"])
