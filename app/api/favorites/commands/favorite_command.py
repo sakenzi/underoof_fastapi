@@ -24,7 +24,7 @@ async def bll_create_favorite(user_id: int, advertisement_id: int, db: AsyncSess
     
     favorite = await dal_create_favorite(user_id, advertisement_id, db)
     return {
-        "id": favorite.id,
+        "favorite_id": favorite.id,
         "user_id": user_id,
         "advertisement_id": advertisement_id,
         "message": "Объявление добавлено в избранное"
