@@ -20,3 +20,12 @@ class ApplicationListResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ApplicationTenantListResponse(BaseModel):
+    id: int
+    advertisement: AdvertisementListResponse
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

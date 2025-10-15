@@ -9,7 +9,7 @@ from app.api.applications.crud.application_crud import (
     dal_get_applications_by_user,
 )
 from app.api.advertisements.crud.adv_crud import dal_get_user_role, dal_get_advertisement_by_id
-from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse
+from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse
 from app.api.advertisements.schemas.response import (
     UserResponse, 
     LocationsResponse, 
@@ -177,7 +177,7 @@ async def bll_delete_application_by_id(application_id: int, user_id: int, db: As
     return ApplicationResponse(message="Отклик успешно удален", application_id=application_id)
 
 
-async def bll_get_user_applications(user_id: int, db: AsyncSession) -> List[ApplicationListResponse]:
+async def bll_get_user_applications(user_id: int, db: AsyncSession) -> List[ApplicationTenantListResponse]:
     user_role = await dal_get_user_role(user_id, 2, db)
     if not user_role:
         logger.error(f"User {user_id} does not have tenant role (role_id=2)")
@@ -186,16 +186,6 @@ async def bll_get_user_applications(user_id: int, db: AsyncSession) -> List[Appl
     applications = await dal_get_applications_by_user(user_id, db)
     results = []
     for app in applications:
-        user = app.user
-        user_response = UserResponse(
-            id=user.id,
-            first_name=user.first_name or "",
-            last_name=user.last_name or "",
-            surname=user.surname or "",
-            phone_number=user.phone_number or "",
-            logo_link=user.user_logos[0].logo.logo_link if user.user_logos else None
-        ) if user else None
-
         advertisement = app.advertisement
         location_response = None
         full_address = None
@@ -274,10 +264,9 @@ async def bll_get_user_applications(user_id: int, db: AsyncSession) -> List[Appl
             is_favourite=is_favourite
         )
 
-        results.append(ApplicationListResponse(
+        results.append(ApplicationTenantListResponse(
             id=app.id,
             advertisement=advertisement_response,
-            user=user_response,
             created_at=app.created_at
         ))
 

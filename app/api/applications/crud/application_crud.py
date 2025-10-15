@@ -87,9 +87,6 @@ async def dal_delete_application_by_id(application_id: int, db: AsyncSession) ->
 
 async def dal_get_applications_by_user(user_id: int, db: AsyncSession) -> List[Application]:
     stmt = select(Application).where(Application.user_id == user_id).options(
-        selectinload(Application.user)
-            .selectinload(User.user_logos)
-            .selectinload(UserLogo.logo),
         selectinload(Application.advertisement)
             .selectinload(Advertisement.location)
             .selectinload(Location.street)

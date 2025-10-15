@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.applications.commands.application_command import (bll_create_application, bll_get_applications_by_user_ads, 
                                                                bll_delete_application_by_id, bll_get_user_applications,)
-from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse
+from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse
 from database.db import get_db
 from util.context_utils import get_access_token, validate_access_token
 import logging
@@ -67,7 +67,7 @@ async def delete_application(
 @router.get(
     "/my",
     summary="Получить свои оставленные отклики",
-    response_model=List[ApplicationListResponse]
+    response_model=List[ApplicationTenantListResponse]
 )
 async def get_user_applications(access_token: str = Depends(get_access_token), db: AsyncSession = Depends(get_db)):
     try:
