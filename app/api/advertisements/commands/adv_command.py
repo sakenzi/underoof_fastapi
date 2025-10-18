@@ -22,7 +22,7 @@ from model.models import Advertisement
 
 logger = logging.getLogger(__name__)
 
-UPLOAD_FOLDER = "Uploads/photo_advertisements"
+UPLOAD_FOLDER = "uploads/photo_advertisements"
 
 async def bll_create_advertisement_by_tenant(user_id: int, data: CreateAdvertisementByTenant, db: AsyncSession) -> AdvertisementResponse:
     user_role = await dal_get_user_role(user_id, 2, db)
