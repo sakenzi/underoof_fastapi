@@ -5,3 +5,6 @@ SET geom = ST_SetSRID(ST_MakePoint(CAST(longitude AS DOUBLE PRECISION), CAST(lat
 WHERE geom IS NULL;
 
 ipconfig getifaddr en0
+
+
+CREATE EXTENSION postgis;
