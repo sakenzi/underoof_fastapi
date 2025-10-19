@@ -9,6 +9,7 @@ from app.api.advertisements.crud.adv_crud import (
     dal_create_advertisement, dal_create_photo, dal_get_user_role, dal_get_location_by_id,
     dal_get_type_advertisement_by_id, dal_get_advertisements_by_user, dal_get_advertisements_by_role,
     dal_get_advertisement_by_id, dal_get_advertisements_by_filter, dal_delete_advertisement_by_id,
+    dal_get_adv_by_id,
 )
 from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
 from datetime import date
@@ -145,7 +146,7 @@ async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSess
 
 
 async def bll_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> AdvertisementListResponse:
-    advertisement = await dal_get_advertisement_by_id(ad_id, db)
+    advertisement = await dal_get_adv_by_id(ad_id, db)
     if not advertisement:
         logger.error(f"Advertisement ID {ad_id} not found")
         raise HTTPException(status_code=404, detail="Объявление не найдено")
