@@ -125,7 +125,7 @@ async def dal_get_advertisements_by_role(role_id: int, db: AsyncSession) -> List
     return advertisements
 
 
-async def dal_get_advertisement_by_id(advertisement_id: int, user_id: int, db: AsyncSession) -> Advertisement | None:
+async def dal_get_advertisement_by_id(advertisement_id: int, db: AsyncSession) -> Advertisement | None:
     stmt = select(Advertisement).where(Advertisement.id == advertisement_id).options(
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.user)
@@ -143,7 +143,7 @@ async def dal_get_advertisement_by_id(advertisement_id: int, user_id: int, db: A
     )
     result = await db.execute(stmt)
     advertisement = result.scalar_one_or_none()
-    logger.info(f"Checked advertisement ID {advertisement_id} for user_id {user_id}: {'Found' if advertisement else 'Not found'}")
+    logger.info(f"Checked advertisement ID {advertisement_id}  {'Found' if advertisement else 'Not found'}")
     return advertisement
 
 
