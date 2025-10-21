@@ -96,7 +96,8 @@ async def dal_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
-            .selectinload(AdvertisementPhoto.photo)
+            .selectinload(AdvertisementPhoto.photo),
+        selectinload(Advertisement.favorites)
     )
     result = await db.execute(stmt)
     advertisements = result.scalars().all()
@@ -117,7 +118,8 @@ async def dal_get_advertisements_by_role(role_id: int, db: AsyncSession) -> List
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
-            .selectinload(AdvertisementPhoto.photo)
+            .selectinload(AdvertisementPhoto.photo),
+        selectinload(Advertisement.favorites)
     )
     result = await db.execute(stmt)
     advertisements = result.scalars().all()
@@ -194,7 +196,8 @@ async def dal_get_advertisements_by_filter(
         selectinload(Advertisement.user_role)
             .selectinload(UserRole.role),
         selectinload(Advertisement.advertisement_photos)
-            .selectinload(AdvertisementPhoto.photo)
+            .selectinload(AdvertisementPhoto.photo),
+        selectinload(Advertisement.favorites)
     )
 
     conditions = []

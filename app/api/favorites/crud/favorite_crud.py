@@ -31,6 +31,7 @@ async def dal_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favo
         selectinload(Favorite.advertisement).selectinload(Advertisement.type_advertisement),
         selectinload(Favorite.advertisement).selectinload(Advertisement.user_role).selectinload(UserRole.user).selectinload(User.user_logos).selectinload(UserLogo.logo),
         selectinload(Favorite.advertisement).selectinload(Advertisement.user_role).selectinload(UserRole.role),
+        selectinload(Favorite.advertisement).selectinload(Advertisement.favorites)
     )
     result = await db.execute(stmt)
     favorites = result.scalars().all()

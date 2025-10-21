@@ -8,7 +8,6 @@ from model.models import Advertisement
 import logging
 from typing import List
 
-
 logger = logging.getLogger(__name__)
 
 async def bll_create_favorite(user_id: int, advertisement_id: int, db: AsyncSession) -> dict:
@@ -30,7 +29,6 @@ async def bll_create_favorite(user_id: int, advertisement_id: int, db: AsyncSess
         "message": "Объявление добавлено в избранное"
     }
 
-
 async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[FavoriteListResponse]:
     favorites = await dal_get_favorites_by_user(user_id, db)
     if not favorites:
@@ -39,7 +37,7 @@ async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favo
 
     results = []
     advertisements = [favorite.advertisement for favorite in favorites]
-    formatted_ads = await _format_advertisements_response(advertisements, logger)
+    formatted_ads = await _format_advertisements_response(advertisements, logger, user_id=user_id)  
 
     for favorite, formatted_ad in zip(favorites, formatted_ads):
         results.append(FavoriteListResponse(
@@ -49,7 +47,6 @@ async def bll_get_favorites_by_user(user_id: int, db: AsyncSession) -> List[Favo
 
     logger.info(f"Formatted {len(results)} favorites for user_id={user_id}")
     return results
-
 
 async def bll_delete_favorite(favorite_id: int, user_id: int, db: AsyncSession) -> dict:
     success = await dal_delete_favorite(favorite_id, user_id, db)

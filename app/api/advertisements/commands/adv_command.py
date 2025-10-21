@@ -132,7 +132,7 @@ async def bll_get_landlord_advertisements_for_tenant(user_id: int, db: AsyncSess
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендаторам")
 
     advertisements = await dal_get_advertisements_by_role(1, db)
-    return await _format_advertisements_response(advertisements, logger)
+    return await _format_advertisements_response(advertisements, logger, user_id=user_id)
 
 
 async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:
@@ -142,7 +142,7 @@ async def bll_get_tenant_advertisements_for_landlord(user_id: int, db: AsyncSess
         raise HTTPException(status_code=403, detail="Доступ разрешен только арендодателям")
 
     advertisements = await dal_get_advertisements_by_role(2, db)
-    return await _format_advertisements_response(advertisements, logger)
+    return await _format_advertisements_response(advertisements, logger, user_id=user_id)
 
 
 async def bll_get_advertisement_by_id(ad_id: int, db: AsyncSession) -> AdvertisementListResponse:
@@ -276,7 +276,7 @@ async def _format_advertisements_response(advertisements: List[Advertisement], l
 
 
 async def bll_delete_advertisement_by_id(ad_id: int, user_id: int, db: AsyncSession) -> AdvertisementResponse:
-    advertisement = await dal_delete_advertisement_by_id(ad_id, db)
+    advertisement = await dal_get_adv_by_id(ad_id, db)
     if not advertisement:
         logger.error(f"Advertisement ID {ad_id} not found")
         raise HTTPException(status_code=404, detail="Объявление не найдено")
