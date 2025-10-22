@@ -1,10 +1,10 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from model.models import User, UserRole, Logo, UserLogo
 import logging
-from app.api.users.schemas.update import UserUpdate
 from typing import Optional
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,16 @@ async def dal_create_logo(user_id: int, logo_link: str, db: AsyncSession) -> Log
     await db.commit()
     await db.refresh(logo_obj)
     return logo_obj
+
+
+async def dal_get_user_logo(user_id: int, db: AsyncSession) -> UserLogo | None:
+    result = await db.execute(select(UserLogo).options(joinedload(UserLogo.logo)).where(UserLogo.user_id == user_id))
+    user_logo = result.unique().scalar_one_or_none()
+    if user_logo:
+        logger.info(f"Found logo for user_id: {user_id}, logo_id: {user_logo.user_id}")
+    else:
+        logger.info(f"No logo found for user_id: {user_id}")
+    return user_logo
 
 
 async def dal_update_user(
@@ -74,3 +84,26 @@ async def dal_update_user(
         logger.info(f"No fields to update for user_id: {user_id}")
 
     return user
+
+
+async def dal_delete_logo(user_id: int, db: AsyncSession) -> bool:
+    result = await db.execute(select(UserLogo).options(joinedload(UserLogo.logo)).where(UserLogo.user_id==user_id))
+    user_logo = result.unique().scalar_one_or_none()
+
+    if not user_logo:
+        logger.warning(f"No logo found for user_id: {user_id}")
+        return False
+
+    logo = user_logo.logo
+    if logo and logo.logo_link and os.path.exists(logo.logo_link):
+        try:
+            os.remove(logo.logo_link)
+            logger.info(f"Deleted logo file: {logo.logo_link}")
+        except OSError as e:
+            logger.error(f"Failed to delete logo file {logo.logo_link}: {str(e)}")
+
+    await db.execute(delete(UserLogo).where(UserLogo.user_id == user_id))
+    await db.execute(delete(Logo).where(Logo.id == user_logo.logo_id))
+    await db.commit()
+    logger.info(f"Deleted logo for user_id: {user_id}, logo_id: {user_logo.logo_id}")
+    return True

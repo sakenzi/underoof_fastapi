@@ -2,7 +2,8 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.users.schemas.update import UserUpdate
 from app.api.users.schemas.response import UserBase, LogoResponse
-from app.api.users.crud.user_crud import dal_get_user_by_id, dal_create_logo, dal_update_user
+from app.api.users.crud.user_crud import (dal_get_user_by_id, dal_create_logo, dal_update_user,
+                                          dal_delete_logo, dal_get_user_logo, )
 import logging
 import shutil
 import uuid
@@ -41,6 +42,11 @@ async def bll_create_logo(user_id: int, logo: UploadFile, db: AsyncSession) -> L
     if not logo.filename.lower().endswith(('png', 'jpg', 'jpeg')):
         logger.error(f"Invalid file type for logo: {logo.filename}")
         raise HTTPException(status_code=400, detail="Поддерживаются только файлы .png, .jpg, .jpeg")
+    
+    existing_logo = await dal_get_user_logo(user_id, db)
+    if existing_logo:
+        logger.warning(f"Logo already exists for user_id: {user_id}, logo_id: {existing_logo.logo_id}")
+        raise HTTPException(status_code=400, detail="Логотип уже добавлен")
     
     os.makedirs(UPLOAD_LOGO_FOLDER, exist_ok=True)
 
@@ -86,3 +92,13 @@ async def bll_update_user(user_id: int, data: UserUpdate, db: AsyncSession) -> U
         role=role_name,
         logo_link=logo_link
     )
+
+
+async def bll_delete_logo(user_id: int, db: AsyncSession) -> LogoResponse:
+    success = await dal_delete_logo(user_id, db)
+    if not success:
+        logger.error(f"No logo found to delete for user_id: {user_id}")
+        raise HTTPException(status_code=404, detail="Логотип не найден")
+    
+    logger.info(f"Logo deleted for user_id: {user_id}")
+    return LogoResponse(message="Логотип успешно удален!")
