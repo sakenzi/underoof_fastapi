@@ -1,7 +1,8 @@
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.api.users.schemas.update import UserUpdate
 from app.api.users.schemas.response import UserBase, LogoResponse
-from app.api.users.crud.user_crud import dal_get_user_by_id, dal_create_logo
+from app.api.users.crud.user_crud import dal_get_user_by_id, dal_create_logo, dal_update_user
 import logging
 import shutil
 import uuid
@@ -53,3 +54,35 @@ async def bll_create_logo(user_id: int, logo: UploadFile, db: AsyncSession) -> L
     
     logger.info(f"Logo created for user_id {user_id}, logo_id {logo_obj.id}")
     return LogoResponse(message="Логотип успешно загружен", logo_id=logo_obj.id)
+
+
+async def bll_update_user(user_id: int, data: UserUpdate, db: AsyncSession) -> UserBase:
+    user = await dal_update_user(
+        user_id=user_id,
+        first_name=data.first_name,
+        last_name=data.last_name,
+        surname=data.surname,
+        phone_number=data.phone_number,
+        db=db
+    )
+    if not user:
+        logger.error(F"User with ID {user_id} not found for update")
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    if not user.is_active:
+        logger.error("User with ID {user_id} is not active")
+        raise HTTPException(status_code=400, detail="Пожалуйста, подтвердите email")
+    
+    role_name = user.user_roles[0].role.role_name if user.user_roles else None
+    logo_link = user.user_logos[0].logo.logo_link if user.user_logos else None
+    logger.info(f"User data updated for user_id: {user_id}")
+
+    return UserBase(
+        first_name=user.first_name or "",
+        last_name=user.last_name or "",
+        surname=user.surname or "",
+        email=user.email or "",
+        phone_number=user.phone_number or "",
+        role=role_name,
+        logo_link=logo_link
+    )
