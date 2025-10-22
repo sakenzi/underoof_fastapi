@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, Form, UploadFile, File, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.advertisements.schemas.create import CreateAdvertisementByTenant, CreateAdvertisementByLandlord
+from app.api.advertisements.schemas.update import UpdateAdvertisement
 from app.api.advertisements.schemas.response import AdvertisementResponse, AdvertisementListResponse
 from app.api.advertisements.commands.adv_command import (
     bll_create_advertisement_by_tenant, bll_create_advertisement_by_landlord,
     bll_get_advertisements_by_user, bll_get_landlord_advertisements_for_tenant,
     bll_get_tenant_advertisements_for_landlord, bll_get_advertisement_by_id,
-    bll_get_advertisements_by_filter, bll_delete_advertisement_by_id,
+    bll_get_advertisements_by_filter, bll_delete_advertisement_by_id, 
+    bll_update_advertisement, 
 )
 from database.db import get_db
 from util.context_utils import get_access_token, validate_access_token
@@ -84,6 +86,50 @@ async def add_advertisement_by_landlord(
     )
     logger.info(f"User {user_id} creating landlord advertisement with {len(photos)} photos")
     return await bll_create_advertisement_by_landlord(user_id, data, db)
+
+
+@router.put(
+    "/{ad_id}",
+    summary="Редактировать объявление",
+    response_model=AdvertisementResponse
+)
+async def update_advertisement(
+    ad_id: int,
+    description: Optional[str] = Form(None),
+    number_of_room: Optional[int] = Form(None),
+    quadrature: Optional[float] = Form(None),
+    floor: Optional[int] = Form(None),
+    price: Optional[int] = Form(None),
+    number_of_people: Optional[int] = Form(None),
+    from_the_date: Optional[date] = Form(None),
+    before_the_date: Optional[date] = Form(None),
+    location_id: Optional[int] = Form(None),
+    type_advertisement_id: Optional[int] = Form(None),
+    photos: Optional[List[UploadFile]] = File(None),
+    access_token: str = Depends(get_access_token),
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        user_id = int(await validate_access_token(access_token))
+    except ValueError:
+        logger.error(f"Invalid user ID in token: {access_token}")
+        raise HTTPException(status_code=400, detail="Невалидный ID пользователя в токене")
+
+    data = UpdateAdvertisement(
+        description=description,
+        number_of_room=number_of_room,
+        quadrature=quadrature,
+        floor=floor,
+        price=price,
+        number_of_people=number_of_people,
+        from_the_date=from_the_date,
+        before_the_date=before_the_date,
+        location_id=location_id,
+        type_advertisement_id=type_advertisement_id,
+        photos=photos
+    )
+    logger.info(f"User {user_id} updating advertisement ID {ad_id}")
+    return await bll_update_advertisement(user_id, ad_id, data, db)
 
 
 @router.get(

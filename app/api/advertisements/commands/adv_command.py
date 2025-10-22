@@ -5,11 +5,12 @@ from app.api.advertisements.schemas.response import (
     AdvertisementResponse, AdvertisementListResponse, 
     UserResponse, RoleResponse, UserRoleResponse, 
     TypeAdvertisementResponse, PhotoResponse)
+from app.api.advertisements.schemas.update import UpdateAdvertisement
 from app.api.advertisements.crud.adv_crud import (
     dal_create_advertisement, dal_create_photo, dal_get_user_role, dal_get_location_by_id,
     dal_get_type_advertisement_by_id, dal_get_advertisements_by_user, dal_get_advertisements_by_role,
     dal_get_advertisement_by_id, dal_get_advertisements_by_filter, dal_delete_advertisement_by_id,
-    dal_get_adv_by_id,
+    dal_get_adv_by_id, dal_update_advertisement, dal_update_photos, 
 )
 from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
 from datetime import date
@@ -118,6 +119,80 @@ async def bll_create_advertisement_by_landlord(user_id: int, data: CreateAdverti
 
     logger.info(f"Advertisement created by landlord user_id {user_id}, ad_id {advertisement.id} with {len(data.photos)} photos")
     return AdvertisementResponse(message="Объявление с фото создано", ad_id=advertisement.id)
+
+
+async def bll_update_advertisement(user_id: int, ad_id: int, data: UpdateAdvertisement, db: AsyncSession) -> AdvertisementResponse:
+    advertisement = await dal_get_adv_by_id(ad_id, db)
+    if not advertisement:
+        logger.error(f"Advertisement ID {ad_id} not found")
+        raise HTTPException(status_code=404, detail="Объявление не найдено")
+
+    if advertisement.user_role.user_id != user_id:
+        logger.error(f"User {user_id} not authorized to update advertisement ID {ad_id}")
+        raise HTTPException(status_code=403, detail="Доступ запрещен, вы не являетесь владельцем объявления")
+
+    user_role = await dal_get_user_role(user_id, advertisement.user_role.role_id, db)
+    if not user_role:
+        logger.error(f"User {user_id} does not have required role for advertisement ID {ad_id}")
+        raise HTTPException(status_code=403, detail="Доступ запрещен, требуется соответствующая роль")
+
+    from_date = data.from_the_date or advertisement.from_the_date
+    before_date = data.before_the_date or advertisement.before_the_date
+    if from_date > before_date:
+        logger.error(f"Invalid date range: from {from_date} to {before_date}")
+        raise HTTPException(status_code=400, detail="Дата начала должна быть раньше даты окончания")
+
+    if data.location_id:
+        location = await dal_get_location_by_id(data.location_id, db)
+        if not location:
+            logger.error(f"Location ID {data.location_id} not found")
+            raise HTTPException(status_code=404, detail="Адрес не найден")
+
+    if data.type_advertisement_id:
+        type_ad = await dal_get_type_advertisement_by_id(data.type_advertisement_id, db)
+        if not type_ad:
+            logger.error(f"Type advertisement ID {data.type_advertisement_id} not found")
+            raise HTTPException(status_code=404, detail="Тип объявления не найден")
+
+    if data.photos and user_role.role_id == 1:
+        if not data.photos:
+            logger.error("No photos provided for landlord advertisement update")
+            raise HTTPException(status_code=400, detail="Требуется хотя бы одна фотография")
+        for photo in data.photos:
+            if not photo.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                logger.error(f"Invalid file type for photo: {photo.filename}")
+                raise HTTPException(status_code=400, detail="Поддерживаются только файлы .png, .jpg, .jpeg")
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        photo_links = []
+        for photo in data.photos:
+            filename = f"{uuid.uuid4()}.{photo.filename.split('.')[-1]}"
+            save_path = os.path.join(UPLOAD_FOLDER, filename)
+            with open(save_path, "wb") as buffer:
+                shutil.copyfileobj(photo.file, buffer)
+            photo_links.append(save_path)
+        await dal_update_photos(ad_id, photo_links, db)
+    elif data.photos and user_role.role_id != 1:
+        logger.error(f"Tenant user {user_id} attempted to update photos for advertisement ID {ad_id}")
+        raise HTTPException(status_code=403, detail="Арендаторы не могут обновлять фотографии")
+
+    advertisement = await dal_update_advertisement(
+        advertisement_id=ad_id,
+        description=data.description,
+        number_of_room=data.number_of_room,
+        quadrature=data.quadrature,
+        floor=data.floor,
+        price=data.price,
+        number_of_people=data.number_of_people,
+        from_the_date=data.from_the_date,
+        before_the_date=data.before_the_date,
+        location_id=data.location_id,
+        type_advertisement_id=data.type_advertisement_id,
+        db=db
+    )
+
+    logger.info(f"Advertisement ID {ad_id} updated by user_id {user_id}")
+    return AdvertisementResponse(message="Объявление успешно обновлено", ad_id=advertisement.id)
 
 
 async def bll_get_advertisements_by_user(user_id: int, db: AsyncSession) -> List[AdvertisementListResponse]:

@@ -1,4 +1,4 @@
-from sqlalchemy import select, func, distinct
+from sqlalchemy import select, func, distinct, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from model.models import (Advertisement, AdvertisementPhoto, Photo, 
@@ -6,6 +6,7 @@ from model.models import (Advertisement, AdvertisementPhoto, Photo,
                           UserLogo, Logo, User)
 from datetime import date
 import logging
+import os
 from typing import List, Tuple, Optional
 from fastapi import HTTPException
 
@@ -57,6 +58,85 @@ async def dal_create_photo(advertisement_id: int, photo_link: str, db: AsyncSess
     await db.refresh(photo_obj)
     logger.info(f"Created photo {photo_link} for advertisement ID {advertisement_id}")
     return photo_obj
+
+
+async def dal_update_advertisement(
+    advertisement_id: int,
+    description: Optional[str] = None,
+    number_of_room: Optional[int] = None,
+    quadrature: Optional[float] = None,
+    floor: Optional[int] = None,
+    price: Optional[int] = None,
+    number_of_people: Optional[int] = None,
+    from_the_date: Optional[date] = None,
+    before_the_date: Optional[date] = None,
+    location_id: Optional[int] = None,
+    type_advertisement_id: Optional[int] = None,
+    db: AsyncSession = None
+) -> Advertisement | None:
+    advertisement = await dal_get_adv_by_id(advertisement_id, db)
+    if not advertisement:
+        logger.warning(f"No advertisement found for advertisement_id: {advertisement_id} to update")
+        raise HTTPException(status_code=404, detail="Объявление не найдено")
+
+    updates = {}
+    if description is not None:
+        updates["description"] = description
+    if number_of_room is not None:
+        updates["number_of_room"] = number_of_room
+    if quadrature is not None:
+        updates["quadrature"] = quadrature
+    if floor is not None:
+        updates["floor"] = floor
+    if price is not None:
+        updates["price"] = price
+    if number_of_people is not None:
+        updates["number_of_people"] = number_of_people
+    if from_the_date is not None:
+        updates["from_the_date"] = from_the_date
+    if before_the_date is not None:
+        updates["before_the_date"] = before_the_date
+    if location_id is not None:
+        updates["location_id"] = location_id
+    if type_advertisement_id is not None:
+        updates["type_advertisement_id"] = type_advertisement_id
+
+    if updates:
+        await db.execute(
+            update(Advertisement)
+            .where(Advertisement.id == advertisement_id)
+            .values(**updates)
+        )
+        await db.commit()
+        await db.refresh(advertisement)
+        logger.info(f"Updated advertisement ID {advertisement_id}, updated fields: {list(updates.keys())}")
+    else:
+        logger.info(f"No fields to update for advertisement_id: {advertisement_id}")
+
+    return advertisement
+
+async def dal_update_photos(advertisement_id: int, photo_links: List[str], db: AsyncSession) -> None:
+    result = await db.execute(
+        select(AdvertisementPhoto)
+        .options(selectinload(AdvertisementPhoto.photo))
+        .where(AdvertisementPhoto.advertisement_id == advertisement_id)
+    )
+    existing_photos = result.scalars().all()
+    for ad_photo in existing_photos:
+        if ad_photo.photo.photo_link and os.path.exists(ad_photo.photo.photo_link):
+            try:
+                os.remove(ad_photo.photo.photo_link)
+                logger.info(f"Deleted photo file: {ad_photo.photo.photo_link}")
+            except OSError as e:
+                logger.error(f"Failed to delete photo file {ad_photo.photo.photo_link}: {str(e)}")
+        await db.execute(delete(AdvertisementPhoto).where(AdvertisementPhoto.id == ad_photo.id))
+        await db.execute(delete(Photo).where(Photo.id == ad_photo.photo_id))
+    
+    for photo_link in photo_links:
+        await dal_create_photo(advertisement_id, photo_link, db)
+    
+    await db.commit()
+    logger.info(f"Updated photos for advertisement_id: {advertisement_id}, added {len(photo_links)} photos")
 
 
 async def dal_get_user_role(user_id: int, role_id: int, db: AsyncSession) -> UserRole | None:
@@ -255,3 +335,5 @@ async def dal_delete_advertisement_by_id(ad_id: int, db: AsyncSession) -> None:
     await db.delete(advertisement)
     await db.commit()
     logger.info("Advertisement ID {ad_id} deleted successfully")
+
+
