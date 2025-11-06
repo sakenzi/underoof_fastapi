@@ -7,10 +7,18 @@ from app.api.applications2.crud.application_crud import (
     dal_delete_application_by_id, 
     dal_get_application_by_id,
     dal_get_applications_by_user,
-    dal_get_applications_by_advertisement
+    dal_get_applications_by_advertisement,
 )
-from app.api.advertisements.crud.adv_crud import dal_get_user_role, dal_get_advertisement_by_id
-from app.api.applications2.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse, ApplicationResponseWrapper
+from app.api.advertisements.crud.adv_crud import (
+    dal_get_user_role, 
+    dal_get_advertisement_by_id,
+)
+from app.api.applications2.schemas.response import (
+    ApplicationResponse, 
+    ApplicationListResponse, 
+    ApplicationTenantListResponse, 
+    ApplicationResponseWrapper,
+)
 from app.api.advertisements.schemas.response import (
     UserResponse, 
     LocationsResponse, 

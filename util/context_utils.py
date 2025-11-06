@@ -1,14 +1,31 @@
 import hashlib
-
-from datetime import datetime, timedelta
+from fastapi.security import (
+    HTTPAuthorizationCredentials, 
+    HTTPBearer,
+)
+from datetime import (
+    datetime, 
+    timedelta,
+)
 from typing import Optional
-from jose import jwt, JWTError
-from fastapi import HTTPException, Request
+from jose import (
+    jwt, 
+    JWTError,
+)
+from fastapi import (
+    HTTPException, 
+    Request, 
+    Depends,
+)
+from sqlalchemy.ext.asyncio import AsyncSession
+from database.db import get_db
 import logging
 from core.config import settings
 
 
 logger = logging.getLogger(__name__)
+
+oauth2_scheme =HTTPBearer()
 
 def hash_password(plain_password: str) -> str:
     return hashlib.sha256(plain_password.encode('utf-8')).hexdigest()

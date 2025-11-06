@@ -1,9 +1,20 @@
-from fastapi import HTTPException, UploadFile
+from fastapi import (
+    HTTPException, 
+    UploadFile,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.users.schemas.update import UserUpdate
-from app.api.users.schemas.response import UserBase, LogoResponse
-from app.api.users.crud.user_crud import (dal_get_user_by_id, dal_create_logo, dal_update_user,
-                                          dal_delete_logo, dal_get_user_logo, )
+from app.api.users.schemas.response import (
+    UserBase, 
+    LogoResponse,
+)
+from app.api.users.crud.user_crud import (
+    dal_get_user_by_id, 
+    dal_create_logo, 
+    dal_update_user,
+    dal_delete_logo, 
+    dal_get_user_logo, 
+)
 import logging
 import shutil
 import uuid

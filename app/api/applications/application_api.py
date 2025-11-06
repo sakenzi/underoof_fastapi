@@ -1,10 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.applications.commands.application_command import (bll_create_application, bll_get_applications_by_user_ads, 
-                                                               bll_delete_application_by_id, bll_get_user_applications,)
-from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse
+from app.api.applications.commands.application_command import (
+    bll_create_application, 
+    bll_get_applications_by_user_ads, 
+    bll_delete_application_by_id, 
+    bll_get_user_applications,
+)
+from app.api.applications.schemas.response import (
+    ApplicationResponse, 
+    ApplicationListResponse, 
+    ApplicationTenantListResponse,
+)
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 import logging
 from typing import List
 

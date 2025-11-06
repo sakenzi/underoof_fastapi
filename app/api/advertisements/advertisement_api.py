@@ -1,17 +1,40 @@
-from fastapi import APIRouter, Depends, Request, HTTPException, Form, UploadFile, File, Query, Response
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    Request, 
+    HTTPException, 
+    Form, 
+    UploadFile, 
+    File, 
+    Query, 
+    Response,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.advertisements.schemas.create import CreateAdvertisementByTenant, CreateAdvertisementByLandlord
+from app.api.advertisements.schemas.create import (
+    CreateAdvertisementByTenant, 
+    CreateAdvertisementByLandlord,
+)
 from app.api.advertisements.schemas.update import UpdateAdvertisement
-from app.api.advertisements.schemas.response import AdvertisementResponse, AdvertisementListResponse
+from app.api.advertisements.schemas.response import (
+    AdvertisementResponse, 
+    AdvertisementListResponse,
+)
 from app.api.advertisements.commands.adv_command import (
-    bll_create_advertisement_by_tenant, bll_create_advertisement_by_landlord,
-    bll_get_advertisements_by_user, bll_get_landlord_advertisements_for_tenant,
-    bll_get_tenant_advertisements_for_landlord, bll_get_advertisement_by_id,
-    bll_get_advertisements_by_filter, bll_delete_advertisement_by_id, 
+    bll_create_advertisement_by_tenant, 
+    bll_create_advertisement_by_landlord,
+    bll_get_advertisements_by_user, 
+    bll_get_landlord_advertisements_for_tenant,
+    bll_get_tenant_advertisements_for_landlord, 
+    bll_get_advertisement_by_id,
+    bll_get_advertisements_by_filter, 
+    bll_delete_advertisement_by_id, 
     bll_update_advertisement, 
 )
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 from datetime import date
 from typing import List, Optional
 import logging

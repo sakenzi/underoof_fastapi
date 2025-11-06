@@ -1,8 +1,17 @@
-from fastapi import APIRouter, Depends
+from fastapi import (
+    APIRouter, 
+    Depends,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.types.schemas.create import TypeCreate
-from app.api.types.schemas.response import TypeResponse, TypeBase
-from app.api.types.commands.type_command import bll_create_type, bll_get_all_types
+from app.api.types.schemas.response import (
+    TypeResponse, 
+    TypeBase,
+)
+from app.api.types.commands.type_command import (
+    bll_create_type, 
+    bll_get_all_types,
+)
 from database.db import get_db
 import logging
 

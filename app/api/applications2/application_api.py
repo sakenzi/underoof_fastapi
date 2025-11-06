@@ -7,11 +7,18 @@ from app.api.applications2.commands.application_command import (
     bll_get_user_applications,
     bll_get_landlord_applications, 
     bll_get_tenant_received_applications,
-    bll_get_applications_by_advertisement
+    bll_get_applications_by_advertisement,
 )
-from app.api.applications2.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse, ApplicationResponseWrapper
+from app.api.applications2.schemas.response import (
+    ApplicationResponse, 
+    ApplicationTenantListResponse, 
+    ApplicationResponseWrapper,
+)
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 import logging
 from typing import List
 from pydantic import BaseModel

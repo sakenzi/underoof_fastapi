@@ -1,7 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from model.models import City, Street, Location
+from model.models import (
+    City, 
+    Street, 
+    Location,
+)
 import logging
 
 

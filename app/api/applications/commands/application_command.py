@@ -8,8 +8,15 @@ from app.api.applications.crud.application_crud import (
     dal_get_application_by_id,
     dal_get_applications_by_user,
 )
-from app.api.advertisements.crud.adv_crud import dal_get_user_role, dal_get_advertisement_by_id
-from app.api.applications.schemas.response import ApplicationResponse, ApplicationListResponse, ApplicationTenantListResponse
+from app.api.advertisements.crud.adv_crud import (
+    dal_get_user_role, 
+    dal_get_advertisement_by_id,
+)
+from app.api.applications.schemas.response import (
+    ApplicationResponse, 
+    ApplicationListResponse, 
+    ApplicationTenantListResponse,
+)
 from app.api.advertisements.schemas.response import (
     UserResponse, 
     LocationsResponse, 

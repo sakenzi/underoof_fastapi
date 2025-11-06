@@ -1,11 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    HTTPException, 
+    UploadFile, 
+    File,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.users.schemas.response import UserBase, LogoResponse
+from app.api.users.schemas.response import (
+    UserBase, 
+    LogoResponse,
+)
 from app.api.users.schemas.update import UserUpdate
-from app.api.users.commands.user_command import (bll_get_user_data, bll_create_logo, bll_update_user,
-                                                 bll_delete_logo, )
+from app.api.users.commands.user_command import (
+    bll_get_user_data, 
+    bll_create_logo, 
+    bll_update_user,
+    bll_delete_logo, 
+)
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 import logging
 
 

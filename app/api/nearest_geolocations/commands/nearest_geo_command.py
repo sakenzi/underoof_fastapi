@@ -1,8 +1,18 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.advertisements.schemas.response import AdvertisementListResponse
-from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
-from app.api.advertisements.schemas.response import UserResponse, RoleResponse, UserRoleResponse, PhotoResponse, TypeAdvertisementResponse
+from app.api.addresses.schemas.response import (
+    LocationsResponse, 
+    StreetsResponse, 
+    CitiesResponse,
+)
+from app.api.advertisements.schemas.response import (
+    UserResponse, 
+    RoleResponse, 
+    UserRoleResponse, 
+    PhotoResponse, 
+    TypeAdvertisementResponse,
+)
 from app.api.nearest_geolocations.crud.nearest_geo_crud import dal_get_nearest_geolocations
 import logging
 from typing import List

@@ -1,6 +1,9 @@
 import json
-from sqlalchemy.orm import Session
-from model.models import City, Street, Location
+from model.models import (
+    City, 
+    Street, 
+    Location,
+)
 from decimal import Decimal
 from database.db import SessionLocal  
 

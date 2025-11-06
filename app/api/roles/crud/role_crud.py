@@ -1,6 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from model.models import Role, UserRole
+from model.models import (
+    Role, 
+    UserRole,
+)
 import logging
 
 

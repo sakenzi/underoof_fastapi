@@ -1,11 +1,20 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    Query, 
+    HTTPException,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.nearest_geolocations.commands.nearest_geo_command import bll_get_nearest_geolocations
 from app.api.advertisements.schemas.response import AdvertisementListResponse
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 from typing import List
 import logging
+
 
 logger = logging.getLogger(__name__)
 

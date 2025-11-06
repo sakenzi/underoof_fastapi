@@ -1,7 +1,16 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import (
+    select, 
+    update, 
+    delete,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-from model.models import User, UserRole, Logo, UserLogo
+from model.models import (
+    User, 
+    UserRole, 
+    Logo, 
+    UserLogo,
+)
 import logging
 from typing import Optional
 import os

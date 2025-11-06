@@ -19,5 +19,5 @@ class TokenResponse(BaseModel):
 
 
 class MessageResponse(BaseModel):
-    status_code: int | None
+    status_code: Optional[int] = None
     message: str

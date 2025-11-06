@@ -2,9 +2,14 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from model.models import (
-    Application, User, Advertisement, 
-    UserRole, UserLogo, Location, Street,
-    AdvertisementPhoto
+    Application, 
+    User, 
+    Advertisement, 
+    UserRole, 
+    UserLogo, 
+    Location, 
+    Street,
+    AdvertisementPhoto,
 )
 from fastapi import HTTPException
 import logging

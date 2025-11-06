@@ -1,11 +1,30 @@
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    Request, 
+    HTTPException,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.roles.schemas.create import RoleCreate, UserRoleCreate
-from app.api.roles.schemas.response import RoleResponse, RolesResponse
-from app.api.roles.commands.role_command import bll_create_role, bll_get_all_roles, bll_assign_user_role
+from app.api.roles.schemas.create import (
+    RoleCreate, 
+    UserRoleCreate,
+)
+from app.api.roles.schemas.response import (
+    RoleResponse, 
+    RolesResponse,
+)
+from app.api.roles.commands.role_command import (
+    bll_create_role, 
+    bll_get_all_roles, 
+    bll_assign_user_role,
+)
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 import logging
+
 
 logger = logging.getLogger(__name__)
 

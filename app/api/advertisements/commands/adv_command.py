@@ -1,24 +1,47 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.advertisements.schemas.create import CreateAdvertisementByTenant, CreateAdvertisementByLandlord
+from app.api.advertisements.schemas.create import (
+    CreateAdvertisementByTenant, 
+    CreateAdvertisementByLandlord,
+)
 from app.api.advertisements.schemas.response import (
-    AdvertisementResponse, AdvertisementListResponse, 
-    UserResponse, RoleResponse, UserRoleResponse, 
-    TypeAdvertisementResponse, PhotoResponse)
+    AdvertisementResponse, 
+    AdvertisementListResponse, 
+    UserResponse, 
+    RoleResponse, 
+    UserRoleResponse, 
+    TypeAdvertisementResponse, 
+    PhotoResponse,
+)
 from app.api.advertisements.schemas.update import UpdateAdvertisement
 from app.api.advertisements.crud.adv_crud import (
-    dal_create_advertisement, dal_create_photo, dal_get_user_role, dal_get_location_by_id,
-    dal_get_type_advertisement_by_id, dal_get_advertisements_by_user, dal_get_advertisements_by_role,
-    dal_get_advertisement_by_id, dal_get_advertisements_by_filter, dal_delete_advertisement_by_id,
-    dal_get_adv_by_id, dal_update_advertisement, dal_update_photos, 
+    dal_create_advertisement, 
+    dal_create_photo, 
+    dal_get_user_role, 
+    dal_get_location_by_id,
+    dal_get_type_advertisement_by_id, 
+    dal_get_advertisements_by_user, 
+    dal_get_advertisements_by_role,
+    dal_get_advertisements_by_filter, 
+    dal_get_adv_by_id, 
+    dal_update_advertisement, 
+    dal_update_photos, 
 )
-from app.api.addresses.schemas.response import LocationsResponse, StreetsResponse, CitiesResponse
+from app.api.addresses.schemas.response import (
+    LocationsResponse, 
+    StreetsResponse, 
+    CitiesResponse,
+)
 from datetime import date
 import uuid
 import os
 import shutil
 import logging
-from typing import List, Tuple, Optional
+from typing import (
+    List, 
+    Tuple, 
+    Optional,
+)
 from model.models import Advertisement
 
 

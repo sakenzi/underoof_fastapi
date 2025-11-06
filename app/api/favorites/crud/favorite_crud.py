@@ -1,7 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import (
+    select, 
+    delete,
+)
 from sqlalchemy.exc import IntegrityError
-from model.models import Favorite, Advertisement, AdvertisementPhoto, Street, Location, UserRole, User, UserLogo
+from model.models import (
+    Favorite, 
+    Advertisement, 
+    AdvertisementPhoto, 
+    Street, 
+    Location, 
+    UserRole, 
+    User, 
+    UserLogo,
+)
 from typing import List, Optional
 import logging
 from sqlalchemy.orm import selectinload

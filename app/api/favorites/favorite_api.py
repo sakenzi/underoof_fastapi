@@ -1,11 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    HTTPException,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.favorites.commands.favorite_command import bll_create_favorite, bll_get_favorites_by_user, bll_delete_favorite
-from app.api.advertisements.schemas.response import AdvertisementListResponse
+from app.api.favorites.commands.favorite_command import (
+    bll_create_favorite, 
+    bll_get_favorites_by_user, 
+    bll_delete_favorite,
+)
 from database.db import get_db
-from util.context_utils import get_access_token, validate_access_token
+from util.context_utils import (
+    get_access_token, 
+    validate_access_token,
+)
 from app.api.favorites.schemas.create import FavoriteCreate
-from app.api.favorites.schemas.response import FavoriteListResponse, FavoriteResponse
+from app.api.favorites.schemas.response import (
+    FavoriteListResponse, 
+    FavoriteResponse,
+)
 import logging
 from typing import List
 

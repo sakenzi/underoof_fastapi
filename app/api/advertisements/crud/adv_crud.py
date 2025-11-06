@@ -1,13 +1,31 @@
-from sqlalchemy import select, func, distinct, update, delete
+from sqlalchemy import (
+    select, 
+    func, 
+    distinct, 
+    update, 
+    delete,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from model.models import (Advertisement, AdvertisementPhoto, Photo, 
-                          UserRole, Location, TypeAdvertisement, Street,
-                          UserLogo, Logo, User)
+from model.models import (
+    Advertisement, 
+    AdvertisementPhoto, 
+    Photo, 
+    UserRole, 
+    Location, 
+    TypeAdvertisement, 
+    Street,
+    UserLogo, 
+    User,
+)
 from datetime import date
 import logging
 import os
-from typing import List, Tuple, Optional
+from typing import (
+    List, 
+    Tuple, 
+    Optional,
+)
 from fastapi import HTTPException
 
 
@@ -335,5 +353,3 @@ async def dal_delete_advertisement_by_id(ad_id: int, db: AsyncSession) -> None:
     await db.delete(advertisement)
     await db.commit()
     logger.info("Advertisement ID {ad_id} deleted successfully")
-
-
